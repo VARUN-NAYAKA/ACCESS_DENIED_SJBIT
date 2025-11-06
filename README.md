@@ -82,7 +82,6 @@ This project is developed for SJBIT Bangalore Hackathon 2025. Open-source for ed
 
 Contributors
 Your Team Name + Team Members
-
 References
 PlantVillage/Kaggle
 
