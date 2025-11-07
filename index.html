@@ -6,412 +6,261 @@
     <title>Plant Doctor AI</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
-        }
-        .card {
-            background: white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            border-radius: 1.25rem;
-            transition: transform .3s, box-shadow .3s;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-        }
-        #upload-box {
-            border: 3px solid #86efac;
-            background: rgba(134, 239, 172, 0.15);
-            transition: all .3s ease;
-            cursor: pointer;
-            border-radius: 1rem;
-        }
-        #upload-box:hover {
-            background: rgba(74, 222, 128, 0.25);
-            border-color: #22c55e;
-            transform: scale(1.02);
-        }
-        .focus-ring {
-            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
-        }
-        .loader {
-            border: 4px solid #e2e8f0;
-            border-top: 4px solid #10b981;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-            margin-right: .5rem;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        #camera-modal {
-            background: rgba(0,0,0,.75);
-            z-index: 50;
-        }
-        #video {
-            width: 100%;
-            max-width: 640px;
-            border-radius: 1rem;
-        }
-        .header-title {
-            font-weight: 800;
-            font-size: 1.8rem;
-            letter-spacing: -0.5px;
-            background: linear-gradient(90deg, #16a34a, #15803d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        @media (max-width: 640px) {
-            .header-title { font-size: 1.5rem; }
-        }
+        body {font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b;}
+        .card {background:white;box-shadow:0 10px 25px rgba(0,0,0,.08);border-radius:1.25rem;transition:transform .3s,box-shadow .3s;}
+        .card:hover {transform:translateY(-2px);box-shadow:0 15px 35px rgba(0,0,0,.12);}
+        #upload-box {border:3px solid #86efac;background:rgba(134,239,172,.15);transition:all .3s ease;cursor:pointer;border-radius:1rem;}
+        #upload-box:hover {background:rgba(74,222,128,.25);border-color:#22c55e;transform:scale(1.02);}
+        .focus-ring {box-shadow:0 0 0 4px rgba(34,197,94,.3);}
+        .loader {border:4px solid #e2e8f0;border-top:4px solid #10b981;border-radius:50%;width:24px;height:24px;animation:spin 1s linear infinite;display:inline-block;margin-right:.5rem;}
+        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+        #camera-modal {background:rgba(0,0,0,.75);z-index:50;}
+        #video {width:100%;max-width:640px;border-radius:1rem;}
+        .header-title {font-weight:800;font-size:1.8rem;letter-spacing:-.5px;background:linear-gradient(90deg,#16a34a,#15803d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        @media (max-width:640px){.header-title{font-size:1.5rem}}
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <!-- Fixed Top Header -->
-    <header class="bg-white shadow-sm border-b border-gray-100 fixed top-0 left-0 right-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-center">
-            <h1 class="header-title">Plant Doctor AI</h1>
-        </div>
-    </header>
+<!-- Fixed Header -->
+<header class="bg-white shadow-sm border-b border-gray-100 fixed top-0 left-0 right-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-center">
+        <h1 class="header-title">Plant Doctor AI</h1>
+    </div>
+</header>
 
-    <!-- Main Content -->
-    <main class="flex-1 pt-20 pb-8 px-4 max-w-7xl mx-auto w-full">
+<main class="flex-1 pt-20 pb-8 px-4 max-w-7xl mx-auto w-full">
 
-        <!-- Auth Section -->
-        <div id="auth-section" class="bg-white rounded-xl card p-6 md:p-10 mt-6">
-            <div id="login-form-container">
-                <header class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Welcome Back</h2>
-                    <p class="text-gray-600">Login to access the plant health checker.</p>
-                </header>
-                <form id="login-form" class="space-y-6">
-                    <div>
-                        <label for="login-username" class="block text-gray-700 font-medium mb-2">Username</label>
-                        <input type="text" id="login-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
-                    </div>
-                    <div>
-                        <label for="login-password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <input type="password" id="login-password" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300">Login</button>
-                </form>
-                <p class="text-center mt-6 text-gray-600">Don't have an account? <a href="#" id="switch-to-signup" class="text-green-600 font-medium hover:underline">Sign up</a></p>
-                <p id="login-error" class="text-red-600 mt-6 text-center hidden text-sm">Invalid username or password. Please try again.</p>
-            </div>
-
-            <div id="signup-form-container" class="hidden">
-                <header class="text-center mb-10">
-                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Create Account</h2>
-                    <p class="text-gray-600">Join Plant Doctor AI today.</p>
-                </header>
-                <form id="signup-form" class="space-y-6">
-                    <div>
-                        <label for="signup-username" class="block text-gray-700 font-medium mb-2">Username</label>
-                        <input type="text" id="signup-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
-                    </div>
-                    <div>
-                        <label for="signup-password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <input type="password" id="signup-password" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
-                    </div>
-                    <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300">Sign Up</button>
-                </form>
-                <p class="text-center mt-6 text-gray-600">Already have an account? <a href="#" id="switch-to-login" class="text-green-600 font-medium hover:underline">Login</a></p>
-                <p id="signup-error" class="text-red-600 mt-6 text-center hidden text-sm">Username already exists or invalid input.</p>
-                <p id="signup-success" class="text-green-600 mt-6 text-center hidden text-sm">Account created successfully! Please login.</p>
-            </div>
+    <!-- Auth -->
+    <div id="auth-section" class="bg-white rounded-xl card p-6 md:p-10 mt-6">
+        <div id="login-form-container">
+            <header class="text-center mb-10"><h2 class="text-3xl font-bold text-gray-800 mb-3">Welcome Back</h2>
+                <p class="text-gray-600">Login to access the plant health checker.</p></header>
+            <form id="login-form" class="space-y-6">
+                <div><label for="login-username" class="block text-gray-700 font-medium mb-2">Username</label>
+                    <input type="text" id="login-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" required></div>
+                <div><label for="login-password" class="block text-gray-700 font-medium mb-2">Password</label>
+                    <input type="password" id="login-password" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" required></div>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all focus:outline-none focus:ring-4 focus:ring-green-300">Login</button>
+            </form>
+            <p class="text-center mt-6 text-gray-600">Don't have an account? <a href="#" id="switch-to-signup" class="text-green-600 font-medium hover:underline">Sign up</a></p>
+            <p id="login-error" class="text-red-600 mt-6 text-center hidden text-sm">Invalid username or password.</p>
         </div>
 
-        <!-- Main App Section -->
-        <div id="main-section" class="hidden bg-white rounded-xl card p-6 md:p-10 mt-6">
-            <div class="flex justify-end mb-6 gap-3">
-                <button id="lang-toggle" class="bg-indigo-600 text-white py-2 px-5 rounded-lg font-medium hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-400">ಕನ್ನಡ</button>
-                <button id="logout-button" class="bg-red-600 text-white py-2 px-5 rounded-lg font-medium hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-400">Logout</button>
-            </div>
-
-            <p class="text-lg text-gray-600 text-center mb-10 max-w-2xl mx-auto">Upload a leaf image to get an instant diagnosis and treatment plan.</p>
-
-            <!-- Upload Section -->
-            <div id="upload-section">
-                <div id="upload-box" onclick="triggerFileUpload()" class="flex flex-col items-center justify-center h-56 rounded-xl p-8 text-gray-700 mb-6">
-                    <svg class="w-16 h-16 mb-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2m-5-8l-2-2m0 0L7 8m2-2v4"></path>
-                    </svg>
-                    <p class="font-semibold text-xl">Click or Drag & Drop your Plant Leaf Image</p>
-                    <p class="text-sm text-gray-500 mt-2">JPEG, PNG, or GIF up to 4MB</p>
-                </div>
-                <button id="use-camera" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-400">Take Photo from Camera</button>
-                <input type="file" id="file-upload" accept="image/*" class="hidden" onchange="handleFileChange(event)">
-            </div>
-
-            <!-- Preview Section -->
-            <div id="preview-section" class="hidden mt-10 p-6 border border-solid border-gray-300 rounded-xl bg-gray-50">
-                <h2 class="text-xl font-semibold text-green-700 mb-6">Diagnosis Status</h2>
-                <div class="md:flex md:space-x-8">
-                    <div class="mb-6 md:mb-0 md:w-1/3">
-                        <p class="text-gray-600 mb-3 font-medium">Uploaded Image:</p>
-                        <img id="image-preview" class="w-full h-auto object-cover rounded-lg shadow-md border border-solid border-gray-200" alt="Plant Leaf Preview">
-                    </div>
-                    <div class="md:w-2/3 flex flex-col justify-between space-y-4">
-                        <div id="status-message" class="text-gray-700 text-base p-4 rounded-lg bg-yellow-50 border-l-4 border-solid border-yellow-400">Please upload an image to start the analysis.</div>
-                        <button id="diagnose-button" onclick="startDiagnosis()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 disabled:opacity-50" disabled>Start AI Diagnosis (Needs Internet)</button>
-                        <button id="reset-button" onclick="resetApp()" class="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-bold hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-400">Reset</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Results Section -->
-            <div id="result-section" class="hidden mt-12">
-                <h2 class="text-3xl font-bold text-red-600 mb-8 border-b border-solid border-gray-300 pb-3">
-                    <span id="diagnosis-emoji">Warning</span> Diagnosis Result
-                </h2>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-red-50 p-8 rounded-xl border border-solid border-red-200">
-                        <h3 class="text-xl font-semibold text-red-700 mb-4">Identified Issue:</h3>
-                        <p id="result-diagnosis" class="text-2xl font-extrabold text-red-800"></p>
-                        <p id="result-plant-type" class="text-gray-600 mt-2"></p>
-                    </div>
-                    <div class="bg-green-50 p-8 rounded-xl border border-solid border-green-200">
-                        <h3 class="text-xl font-semibold text-green-700 mb-4">AI Confidence:</h3>
-                        <p id="result-confidence" class="text-2xl font-extrabold text-green-800"></p>
-                    </div>
-                </div>
-                <div class="mt-8 bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-xl border border-solid border-gray-300 shadow-inner">
-                    <h3 class="text-2xl font-bold text-green-800 mb-5 flex items-center">
-                        <svg class="w-7 h-7 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.204A9.954 9.954 0 0012 3c-4.419 0-8.24 1.803-10.618 4.796m14.236 0c.2.469.366.97.485 1.504M20 10.5c0 .324.015.645.044.966M12 21c-2.41 0-4.63-.642-6.556-1.754M17.152 14.848l-1.424-1.424m-1.424-1.424l-1.424-1.424"></path>
-                        </svg>
-                        Recommended Treatment Plan
-                    </h3>
-                    <p id="result-treatment" class="text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <!-- Camera Modal -->
-    <div id="camera-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75 p-4">
-        <div class="bg-white p-6 rounded-xl shadow-2xl max-w-lg w-full">
-            <video id="video" autoplay playsinline class="w-full rounded-lg"></video>
-            <div class="mt-6 flex justify-between gap-3">
-                <button id="capture-button" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-400">Capture</button>
-                <button id="close-camera" class="flex-1 bg-gray-600 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition focus:outline-none focus:ring-2 focus:ring-gray-400">Close</button>
-            </div>
+        <div id="signup-form-container" class="hidden">
+            <header class="text-center mb-10"><h2 class="text-3xl font-bold text-gray-800 mb-3">Create Account</h2>
+                <p class="text-gray-600">Join Plant Doctor AI today.</p></header>
+            <form id="signup-form" class="space-y-6">
+                <div><label for="signup-username" class="block text-gray-700 font-medium mb-2">Username</label>
+                    <input type="text" id="signup-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" required></div>
+                <div><label for="signup-password" class="block text-gray-700 font-medium mb-2">Password</label>
+                    <input type="password" id="signup-password" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" required></div>
+                <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all focus:outline-none focus:ring-4 focus:ring-green-300">Sign Up</button>
+            </form>
+            <p class="text-center mt-6 text-gray-600">Already have an account? <a href="#" id="switch-to-login" class="text-green-600 font-medium hover:underline">Login</a></p>
+            <p id="signup-error" class="text-red-600 mt-6 text-center hidden text-sm">Username already exists.</p>
+            <p id="signup-success" class="text-green-600 mt-6 text-center hidden text-sm">Account created! Please login.</p>
         </div>
     </div>
 
-    <script>
-        /* ---------- CONFIG ---------- */
-        const apiKey = "AIzaSyApIYR7z_zLPxKZD3PrU2js5LeMCJgjfbc";  // Your new key
-        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+    <!-- Main App -->
+    <div id="main-section" class="hidden bg-white rounded-xl card p-6 md:p-10 mt-6">
+        <div class="flex justify-end mb-6 gap-3">
+            <button id="lang-toggle" class="bg-indigo-600 text-white py-2 px-5 rounded-lg font-medium hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-400">ಕನ್ನಡ</button>
+            <button id="logout-button" class="bg-red-600 text-white py-2 px-5 rounded-lg font-medium hover:bg-red-700 transition focus:outline-none focus:ring-2 focus:ring-red-400">Logout</button>
+        </div>
 
-        /* ---------- LANGUAGE & AUTH ---------- */
-        const translations = {
-            en: { title: "Plant Doctor AI", subtitle: "Upload a leaf image to get an instant diagnosis and treatment plan.", uploadBox: "Click or Drag & Drop your Plant Leaf Image", uploadHint: "JPEG, PNG, or GIF up to 4MB", cameraBtn: "Take Photo from Camera", diagnoseBtn: "Start AI Diagnosis (Needs Internet)", resetBtn: "Reset", diagnosisStatus: "Diagnosis Status", uploadedImage: "Uploaded Image:", readyMsg: "Image uploaded. Ready for AI diagnosis.", analyzingMsg: "Analyzing with AI...", noInternet: "No internet. Connect to proceed.", resultHeader: "Diagnosis Result", identifiedIssue: "Identified Issue:", confidence: "AI Confidence:", treatmentHeader: "Recommended Treatment Plan" },
-            kn: { title: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI", subtitle: "ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ತಕ್ಷಣ ರೋಗನಿರ್ಣಯ ಪಡೆಯಿರಿ.", uploadBox: "ಚಿತ್ರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ", uploadHint: "JPEG, PNG, 4MB ವರೆಗೆ", cameraBtn: "ಕ್ಯಾಮೆರಾದಿಂದ ಫೋಟೋ", diagnoseBtn: "AI ರೋಗನಿರ್ಣಯ ಪ್ರಾರಂಭಿಸಿ", resetBtn: "ಮರುಹೊಂದಿಸಿ", diagnosisStatus: "ರೋಗನಿರ್ಣಯ ಸ್ಥಿತಿ", uploadedImage: "ಅಪ್‌ಲೋಡ್ ಚಿತ್ರ:", readyMsg: "ಚಿತ್ರ ಸಿದ್ಧ. AI ಗೆ ಕಳುಹಿಸಿ.", analyzingMsg: "AI ವಿಶ್ಲೇಷಿಸುತ್ತಿದೆ...", noInternet: "ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ. ಸಂಪರ್ಕಿಸಿ.", resultHeader: "ರೋಗನಿರ್ಣಯ ಫಲಿತಾಂಶ", identifiedIssue: "ಗುರುತಿಸಿದ ಸಮಸ್ಯೆ:", confidence: "AI ವಿಶ್ವಾಸ:", treatmentHeader: "ಶಿಫಾರಸು ಚಿಕಿತ್ಸೆ" }
-        };
+        <p class="text-lg text-gray-600 text-center mb-10 max-w-2xl mx-auto">Upload a leaf image to get an instant diagnosis and treatment plan.</p>
 
-        let currentLang = localStorage.getItem('lang') || 'en';
-        const LOGGED_USER_KEY = 'plantDoctorLoggedUser';
+        <div id="upload-section">
+            <div id="upload-box" onclick="triggerFileUpload()" class="flex flex-col items-center justify-center h-56 rounded-xl p-8 text-gray-700 mb-6">
+                <svg class="w-16 h-16 mb-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2m-5-8l-2-2m0 0L7 8m2-2v4"></path></svg>
+                <p class="font-semibold text-xl">Click or Drag & Drop your Plant Leaf Image</p>
+                <p class="text-sm text-gray-500 mt-2">JPEG, PNG, or GIF up to 4 MB</p>
+            </div>
+            <button id="use-camera" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-400">Take Photo from Camera</button>
+            <input type="file" id="file-upload" accept="image/*" class="hidden" onchange="handleFileChange(event)">
+        </div>
 
-        function getUsers() { return JSON.parse(localStorage.getItem('users') || '[]'); }
-        function saveUsers(u) { localStorage.setItem('users', JSON.stringify(u)); }
+        <div id="preview-section" class="hidden mt-10 p-6 border border-solid border-gray-300 rounded-xl bg-gray-50">
+            <h2 class="text-xl font-semibold text-green-700 mb-6">Diagnosis Status</h2>
+            <div class="md:flex md:space-x-8">
+                <div class="mb-6 md:mb-0 md:w-1/3"><p class="text-gray-600 mb-3 font-medium">Uploaded Image:</p>
+                    <img id="image-preview" class="w-full h-auto object-cover rounded-lg shadow-md border border-solid border-gray-200" alt="Preview"></div>
+                <div class="md:w-2/3 flex flex-col justify-between space-y-4">
+                    <div id="status-message" class="text-gray-700 text-base p-4 rounded-lg bg-yellow-50 border-l-4 border-solid border-yellow-400">Please upload an image.</div>
+                    <button id="diagnose-button" onclick="startDiagnosis()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 disabled:opacity-50" disabled>Start AI Diagnosis (Needs Internet)</button>
+                    <button id="reset-button" onclick="resetApp()" class="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-bold hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-400">Reset</button>
+                </div>
+            </div>
+        </div>
 
-        function setLoggedIn(u) {
-            localStorage.setItem(LOGGED_USER_KEY, u);
-            document.getElementById('auth-section').classList.add('hidden');
-            document.getElementById('main-section').classList.remove('hidden');
-            setLanguage(currentLang);
+        <div id="result-section" class="hidden mt-12">
+            <h2 class="text-3xl font-bold text-red-600 mb-8 border-b border-solid border-gray-300 pb-3"><span id="diagnosis-emoji">Warning</span> Diagnosis Result</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-red-50 p-8 rounded-xl border border-solid border-red-200">
+                    <h3 class="text-xl font-semibold text-red-700 mb-4">Identified Issue:</h3>
+                    <p id="result-diagnosis" class="text-2xl font-extrabold text-red-800"></p>
+                    <p id="result-plant-type" class="text-gray-600 mt-2"></p>
+                </div>
+                <div class="bg-green-50 p-8 rounded-xl border border-solid border-green-200">
+                    <h3 class="text-xl font-semibold text-green-700 mb-4">AI Confidence:</h3>
+                    <p id="result-confidence" class="text-2xl font-extrabold text-green-800"></p>
+                </div>
+            </div>
+            <div class="mt-8 bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-xl border border-solid border-gray-300 shadow-inner">
+                <h3 class="text-2xl font-bold text-green-800 mb-5 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.204A9.954 9.954 0 0012 3c-4.419 0-8.24 1.803-10.618 4.796m14.236 0c.2.469.366.97.485 1.504M20 10.5c0 .324.015.645.044.966M12 21c-2.41 0-4.63-.642-6.556-1.754M17.152 14.848l-1.424-1.424m-1.424-1.424l-1.424-1.424"></path></svg>
+                    Recommended Treatment Plan
+                </h3>
+                <p id="result-treatment" class="text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Camera Modal -->
+<div id="camera-modal" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-75 p-4">
+    <div class="bg-white p-6 rounded-xl shadow-2xl max-w-lg w-full">
+        <video id="video" autoplay playsinline class="w-full rounded-lg"></video>
+        <div class="mt-6 flex justify-between gap-3">
+            <button id="capture-button" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition focus:outline-none focus:ring-2 focus:ring-green-400">Capture</button>
+            <button id="close-camera" class="flex-1 bg-gray-600 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition focus:outline-none focus:ring-2 focus:ring-gray-400">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ---------- CONFIG ---------- */
+const apiKey = "AIzaSyCUsc2ev5I32WcNwRpw9TsmZkg8lxCgZHw";               // NEW KEY
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+/* ---------- TRANSLATIONS ---------- */
+const translations = {
+    en:{title:"Plant Doctor AI",subtitle:"Upload a leaf image to get an instant diagnosis and treatment plan.",uploadBox:"Click or Drag & Drop your Plant Leaf Image",uploadHint:"JPEG, PNG, or GIF up to 4 MB",cameraBtn:"Take Photo from Camera",diagnoseBtn:"Start AI Diagnosis (Needs Internet)",resetBtn:"Reset",readyMsg:"Image ready – click to diagnose.",analyzingMsg:"Analyzing with AI…",noInternet:"No internet – connect to continue.",resultHeader:"Diagnosis Result",identifiedIssue:"Identified Issue:",confidence:"AI Confidence:",treatmentHeader:"Recommended Treatment Plan"},
+    kn:{title:"ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",subtitle:"ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ತಕ್ಷಣ ರೋಗನಿರ್ಣಯ ಪಡೆಯಿರಿ.",uploadBox:"ಚಿತ್ರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ",uploadHint:"JPEG, PNG, 4 MB ವರೆಗೆ",cameraBtn:"ಕ್ಯಾಮೆರಾದಿಂದ ಫೋಟೋ",diagnoseBtn:"AI ರೋಗನಿರ್ಣಯ ಪ್ರಾರಂಭಿಸಿ",resetBtn:"ಮರುಹೊಂದಿಸಿ",readyMsg:"ಚಿತ್ರ ಸಿದ್ಧ – ಡಯಾಗ್ನೋಸ್ ಮಾಡಿ.",analyzingMsg:"AI ವಿಶ್ಲೇಷಿಸುತ್ತಿದೆ…",noInternet:"ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ – ಸಂಪರ್ಕಿಸಿ.",resultHeader:"ರೋಗನಿರ್ಣಯ ಫಲಿತಾಂಶ",identifiedIssue:"ಗುರುತಿಸಿದ ಸಮಸ್ಯೆ:",confidence:"AI ವಿಶ್ವಾಸ:",treatmentHeader:"ಶಿಫಾರಸು ಚಿಕಿತ್ಸೆ"}
+};
+let currentLang = localStorage.getItem('lang') || 'en';
+const LOGGED_USER_KEY = 'plantDoctorLoggedUser';
+
+/* ---------- AUTH ---------- */
+function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
+function saveUsers(u){localStorage.setItem('users',JSON.stringify(u));}
+function setLoggedIn(u){localStorage.setItem(LOGGED_USER_KEY,u);document.getElementById('auth-section').classList.add('hidden');document.getElementById('main-section').classList.remove('hidden');setLanguage(currentLang);}
+function logout(){localStorage.removeItem(LOGGED_USER_KEY);document.getElementById('main-section').classList.add('hidden');document.getElementById('auth-section').classList.remove('hidden');document.getElementById('login-form-container').classList.remove('hidden');document.getElementById('signup-form-container').classList.add('hidden');resetApp();}
+window.addEventListener('load',()=>{const u=localStorage.getItem(LOGGED_USER_KEY);if(u&&getUsers().some(x=>x.username===u))setLoggedIn(u);setLanguage(currentLang);});
+document.getElementById('switch-to-signup').onclick=e=>{e.preventDefault();toggleAuth('signup');};
+document.getElementById('switch-to-login').onclick=e=>{e.preventDefault();toggleAuth('login');};
+function toggleAuth(m){const l=document.getElementById('login-form-container'),s=document.getElementById('signup-form-container');m==='signup'?(l.classList.add('hidden'),s.classList.remove('hidden')):(s.classList.add('hidden'),l.classList.remove('hidden'));}
+document.getElementById('signup-form').onsubmit=e=>{e.preventDefault();const u=document.getElementById('signup-username').value.trim(),p=document.getElementById('signup-password').value.trim();if(!u||!p)return showError('signup-error','Fill all fields');const us=getUsers();if(us.some(x=>x.username===u))return showError('signup-error','Username exists');us.push({username:u,password:p});saveUsers(us);document.getElementById('signup-success').classList.remove('hidden');setTimeout(()=>toggleAuth('login'),1500);};
+document.getElementById('login-form').onsubmit=e=>{e.preventDefault();const u=document.getElementById('login-username').value.trim(),p=document.getElementById('login-password').value.trim();const user=getUsers().find(x=>x.username===u&&x.password===p);user?setLoggedIn(u):showError('login-error','Invalid credentials');};
+function showError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),4000);}
+document.getElementById('logout-button').onclick=logout;
+
+/* ---------- CAMERA & UI ---------- */
+const useCamera=document.getElementById('use-camera'),cameraModal=document.getElementById('camera-modal'),video=document.getElementById('video'),captureBtn=document.getElementById('capture-button'),closeCam=document.getElementById('close-camera');
+const uploadInput=document.getElementById('file-upload'),uploadBox=document.getElementById('upload-box'),previewSection=document.getElementById('preview-section'),resultSection=document.getElementById('result-section'),diagnoseButton=document.getElementById('diagnose-button'),imagePreview=document.getElementById('image-preview'),statusMessage=document.getElementById('status-message');
+
+useCamera.onclick=()=>{cameraModal.classList.remove('hidden');navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(s=>video.srcObject=s).catch(()=>{alert('Camera denied');cameraModal.classList.add('hidden');});};
+captureBtn.onclick=()=>{const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;c.getContext('2d').drawImage(video,0,0);c.toBlob(b=>{const f=new File([b],'photo.jpg',{type:'image/jpeg'});const dt=new DataTransfer();dt.items.add(f);uploadInput.files=dt.files;handleFileChange({target:{files:uploadInput.files}});cameraModal.classList.add('hidden');video.srcObject.getTracks().forEach(t=>t.stop());},'image/jpeg');};
+closeCam.onclick=()=>{cameraModal.classList.add('hidden');if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());};
+
+let uploadedFileBase64=null;
+function fileToBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
+function triggerFileUpload(){uploadInput.click();}
+function handleFileChange(e){const file=e.target.files[0];if(!file)return;if(file.size>4*1024*1024){statusMessage.innerHTML='File too large (max 4 MB).';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}fileToBase64(file).then(b=>{uploadedFileBase64=b;imagePreview.src=URL.createObjectURL(file);document.getElementById('upload-section').classList.add('hidden');previewSection.classList.remove('hidden');statusMessage.innerHTML=translations[currentLang].readyMsg;statusMessage.className='p-4 bg-green-50 border-l-4 border-solid border-green-400';diagnoseButton.disabled=false;}).catch(()=>{statusMessage.innerHTML='Failed to read file.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';});}
+function resetApp(){uploadedFileBase64=null;uploadInput.value='';diagnoseButton.disabled=true;document.getElementById('upload-section').classList.remove('hidden');previewSection.classList.add('hidden');resultSection.classList.add('hidden');statusMessage.innerHTML='Upload an image to begin.';statusMessage.className='p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400';}
+function setLoading(l){diagnoseButton.disabled=l;diagnoseButton.innerHTML=l?`<div class="loader"></div> ${translations[currentLang].analyzingMsg}`:translations[currentLang].diagnoseBtn;statusMessage.innerHTML=l?translations[currentLang].analyzingMsg:translations[currentLang].readyMsg;statusMessage.className=l?'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400':'p-4 bg-green-50 border-l-4 border-solid border-green-400';}
+
+/* ---------- GEMINI CALL ---------- */
+async function startDiagnosis(){
+    if(!uploadedFileBase64)return;
+    if(uploadedFileBase64.length<100){statusMessage.innerHTML='Invalid image.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
+    const mimeType=uploadInput.files[0]?.type||"image/jpeg";
+    if(!mimeType.startsWith('image/')){statusMessage.innerHTML='Invalid image type.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
+
+    setLoading(true);
+    if(!navigator.onLine){setLoading(false);statusMessage.innerHTML=translations[currentLang].noInternet;statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
+
+    const systemPrompt=`You are a world-class plant pathologist. Analyze the leaf image and return ONLY a JSON object with:
+plantType (string), diseaseName (string or "Healthy"), confidenceScore (number 0-1), treatmentPlan (string with 3-5 steps).`;
+
+    const payload={
+        contents:[{role:"user",parts:[{text:"Analyze this plant leaf."},{inlineData:{mimeType,data:uploadedFileBase64}}]}],
+        systemInstruction:{parts:[{text:systemPrompt}]},
+        generationConfig:{
+            responseMimeType:"application/json",
+            responseSchema:{type:"OBJECT",properties:{plantType:{type:"STRING"},diseaseName:{type:"STRING"},confidenceScore:{type:"NUMBER",minimum:0,maximum:1},treatmentPlan:{type:"STRING"}},required:["plantType","diseaseName","confidenceScore","treatmentPlan"]},
+            safetySettings:[
+                {category:"HARM_CATEGORY_HARASSMENT",threshold:"BLOCK_NONE"},
+                {category:"HARM_CATEGORY_HATE_SPEECH",threshold:"BLOCK_NONE"},
+                {category:"HARM_CATEGORY_SEXUALLY_EXPLICIT",threshold:"BLOCK_NONE"},
+                {category:"HARM_CATEGORY_DANGEROUS_CONTENT",threshold:"BLOCK_NONE"}
+            ]
         }
+    };
 
-        function logout() {
-            localStorage.removeItem(LOGGED_USER_KEY);
-            document.getElementById('main-section').classList.add('hidden');
-            document.getElementById('auth-section').classList.remove('hidden');
-            document.getElementById('login-form-container').classList.remove('hidden');
-            document.getElementById('signup-form-container').classList.add('hidden');
-            resetApp();
-        }
-
-        window.addEventListener('load', () => {
-            const user = localStorage.getItem(LOGGED_USER_KEY);
-            if (user && getUsers().some(u => u.username === user)) setLoggedIn(user);
-            setLanguage(currentLang);
-        });
-
-        document.getElementById('switch-to-signup').onclick = e => { e.preventDefault(); toggleAuth('signup'); };
-        document.getElementById('switch-to-login').onclick = e => { e.preventDefault(); toggleAuth('login'); };
-
-        function toggleAuth(mode) {
-            const login = document.getElementById('login-form-container');
-            const signup = document.getElementById('signup-form-container');
-            mode === 'signup' ? (login.classList.add('hidden'), signup.classList.remove('hidden')) : (signup.classList.add('hidden'), login.classList.remove('hidden'));
-        }
-
-        document.getElementById('signup-form').onsubmit = e => {
-            e.preventDefault();
-            const u = document.getElementById('signup-username').value.trim();
-            const p = document.getElementById('signup-password').value.trim();
-            if (!u || !p) return showError('signup-error', 'Fill all fields');
-            const users = getUsers();
-            if (users.some(x => x.username === u)) return showError('signup-error', 'Username exists');
-            users.push({username: u, password: p}); saveUsers(users);
-            document.getElementById('signup-success').classList.remove('hidden');
-            setTimeout(() => toggleAuth('login'), 1500);
-        };
-
-        document.getElementById('login-form').onsubmit = e => {
-            e.preventDefault();
-            const u = document.getElementById('login-username').value.trim();
-            const p = document.getElementById('login-password').value.trim();
-            const user = getUsers().find(x => x.username === u && x.password === p);
-            user ? setLoggedIn(u) : showError('login-error', 'Invalid credentials');
-        };
-
-        function showError(id, msg) {
-            const el = document.getElementById(id);
-            el.textContent = msg; el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 4000);
-        }
-
-        document.getElementById('logout-button').onclick = logout;
-
-        /* ---------- CAMERA & AI ---------- */
-        const useCamera = document.getElementById('use-camera'), cameraModal = document.getElementById('camera-modal'), video = document.getElementById('video'), captureBtn = document.getElementById('capture-button'), closeCam = document.getElementById('close-camera');
-        const uploadInput = document.getElementById('file-upload'), uploadBox = document.getElementById('upload-box'), previewSection = document.getElementById('preview-section'), resultSection = document.getElementById('result-section'), diagnoseButton = document.getElementById('diagnose-button'), imagePreview = document.getElementById('image-preview'), statusMessage = document.getElementById('status-message');
-
-        useCamera.onclick = () => {
-            cameraModal.classList.remove('hidden');
-            navigator.mediaDevices.getUserMedia({video: {facingMode: 'environment'}})
-                .then(s => video.srcObject = s)
-                .catch(() => { alert('Camera access denied'); cameraModal.classList.add('hidden'); });
-        };
-        captureBtn.onclick = () => {
-            const c = document.createElement('canvas'); c.width = video.videoWidth; c.height = video.videoHeight;
-            c.getContext('2d').drawImage(video, 0, 0);
-            c.toBlob(b => {
-                const f = new File([b], 'photo.jpg', {type: 'image/jpeg'});
-                const dt = new DataTransfer(); dt.items.add(f);
-                uploadInput.files = dt.files; handleFileChange({target: {files: uploadInput.files}});
-                cameraModal.classList.add('hidden'); video.srcObject.getTracks().forEach(t => t.stop());
-            }, 'image/jpeg');
-        };
-        closeCam.onclick = () => { cameraModal.classList.add('hidden'); if (video.srcObject) video.srcObject.getTracks().forEach(t => t.stop()); };
-
-        let uploadedFileBase64 = null;
-
-        function fileToBase64(f) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(',')[1]); r.onerror = rej; r.readAsDataURL(f); }); }
-        function triggerFileUpload() { uploadInput.click(); }
-
-        function handleFileChange(e) {
-            const file = e.target.files[0]; if (!file) return;
-            if (file.size > 4 * 1024 * 1024) {
-                statusMessage.innerHTML = 'File too large (max 4MB). Compress and try again.';
-                statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400';
-                return;
+    let attempts=0;
+    const maxAttempts=3;
+    while(attempts<maxAttempts){
+        try{
+            const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+            if(!r.ok){
+                const err=await r.text();
+                if(r.status===429){await new Promise(res=>setTimeout(res,2000*(attempts+1)));attempts++;continue;}
+                throw new Error(`HTTP ${r.status}: ${err}`);
             }
-            fileToBase64(file).then(b => {
-                uploadedFileBase64 = b; imagePreview.src = URL.createObjectURL(file);
-                document.getElementById('upload-section').classList.add('hidden'); previewSection.classList.remove('hidden');
-                statusMessage.innerHTML = translations[currentLang].readyMsg;
-                statusMessage.className = 'p-4 bg-green-50 border-l-4 border-solid border-green-400';
-                diagnoseButton.disabled = false;
-            }).catch(() => {
-                statusMessage.innerHTML = 'Failed to read file.';
-                statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400';
-            });
-        }
-
-        function resetApp() {
-            uploadedFileBase64 = null; uploadInput.value = ''; diagnoseButton.disabled = true;
-            document.getElementById('upload-section').classList.remove('hidden'); previewSection.classList.add('hidden'); resultSection.classList.add('hidden');
-            statusMessage.innerHTML = 'Upload an image to begin.'; statusMessage.className = 'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400';
-        }
-
-        function setLoading(l) {
-            diagnoseButton.disabled = l;
-            diagnoseButton.innerHTML = l ? `<div class="loader"></div> ${translations[currentLang].analyzingMsg}` : translations[currentLang].diagnoseBtn;
-            statusMessage.innerHTML = l ? translations[currentLang].analyzingMsg : translations[currentLang].readyMsg;
-            statusMessage.className = l ? 'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400' : 'p-4 bg-green-50 border-l-4 border-solid border-green-400';
-        }
-
-        async function startDiagnosis() {
-            if (!uploadedFileBase64) return;
-            if (uploadedFileBase64.length < 100) { statusMessage.innerHTML = 'Invalid image.'; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400'; return; }
-            const mimeType = uploadInput.files[0]?.type || "image/jpeg";
-            if (!mimeType.startsWith("image/")) { statusMessage.innerHTML = 'Invalid image type.'; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400'; return; }
-
-            setLoading(true);
-            if (!navigator.onLine) { setLoading(false); statusMessage.innerHTML = translations[currentLang].noInternet; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400'; return; }
-
-            const systemPrompt = `You are a world-class plant pathologist. Analyze the leaf image and return ONLY a JSON object with: plantType (string), diseaseName (string or "Healthy"), confidenceScore (number 0-1), treatmentPlan (string with 3-5 steps).`;
-            const payload = {
-                contents: [{ role: "user", parts: [{ text: "Analyze this plant leaf." }, { inlineData: { mimeType, data: uploadedFileBase64 } }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: { type: "OBJECT", properties: { plantType: { type: "STRING" }, diseaseName: { type: "STRING" }, confidenceScore: { type: "NUMBER", minimum: 0, maximum: 1 }, treatmentPlan: { type: "STRING" } }, required: ["plantType", "diseaseName", "confidenceScore", "treatmentPlan"] },
-                    safetySettings: [
-                        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                        { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                    ]
-                }
-            };
-
-            try {
-                const r = await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                if (!r.ok) { const err = await r.text(); throw new Error(`HTTP ${r.status}: ${err}`); }
-                const j = await r.json(); const txt = j.candidates?.[0]?.content?.parts?.[0]?.text;
-                if (!txt) throw new Error("No AI response");
-                const data = JSON.parse(txt); setLoading(false); displayResults(data);
-            } catch (err) {
-                console.error("API Error:", err);
+            const j=await r.json();
+            const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
+            if(!txt)throw new Error("No AI response");
+            const data=JSON.parse(txt);
+            setLoading(false);displayResults(data);
+            return;
+        }catch(err){
+            attempts++;
+            if(attempts===maxAttempts){
+                console.error("Gemini error:",err);
                 setLoading(false);
-                statusMessage.innerHTML = `Error: ${err.message}`;
-                statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400';
+                statusMessage.innerHTML=`Error: ${err.message}`;
+                statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';
             }
         }
+    }
+}
 
-        function displayResults(d) {
-            const healthy = d.diseaseName.toLowerCase() === 'healthy';
-            const conf = (d.confidenceScore * 100).toFixed(1);
-            document.getElementById('diagnosis-emoji').textContent = healthy ? 'Healthy' : 'Warning';
-            document.getElementById('result-diagnosis').textContent = d.diseaseName;
-            document.getElementById('result-plant-type').textContent = `Plant: ${d.plantType}`;
-            document.getElementById('result-confidence').textContent = `${conf}%`;
-            document.getElementById('result-treatment').textContent = d.treatmentPlan;
-            resultSection.classList.remove('hidden');
-            const card = document.querySelector('#result-section .grid > div:first-child');
-            card.className = healthy ? 'bg-green-50 p-8 rounded-xl border border-solid border-green-200' : 'bg-red-50 p-8 rounded-xl border border-solid border-red-200';
-        }
+/* ---------- DISPLAY RESULTS ---------- */
+function displayResults(d){
+    const healthy=d.diseaseName.toLowerCase()==='healthy';
+    const conf=(d.confidenceScore*100).toFixed(1);
+    document.getElementById('diagnosis-emoji').textContent=healthy?'Healthy':'Warning';
+    document.getElementById('result-diagnosis').textContent=d.diseaseName;
+    document.getElementById('result-plant-type').textContent=`Plant: ${d.plantType}`;
+    document.getElementById('result-confidence').textContent=`${conf}%`;
+    document.getElementById('result-treatment').textContent=d.treatmentPlan;
+    resultSection.classList.remove('hidden');
+    const card=document.querySelector('#result-section .grid > div:first-child');
+    card.className=healthy?'bg-green-50 p-8 rounded-xl border border-solid border-green-200':'bg-red-50 p-8 rounded-xl border border-solid border-red-200';
+}
 
-        uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('focus-ring'); });
-        uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('focus-ring'));
-        uploadBox.addEventListener('drop', e => { e.preventDefault(); uploadBox.classList.remove('focus-ring'); if (e.dataTransfer.files.length) { uploadInput.files = e.dataTransfer.files; uploadInput.dispatchEvent(new Event('change')); } });
+/* ---------- DRAG & DROP ---------- */
+uploadBox.addEventListener('dragover',e=>{e.preventDefault();uploadBox.classList.add('focus-ring');});
+uploadBox.addEventListener('dragleave',()=>uploadBox.classList.remove('focus-ring'));
+uploadBox.addEventListener('drop',e=>{e.preventDefault();uploadBox.classList.remove('focus-ring');if(e.dataTransfer.files.length){uploadInput.files=e.dataTransfer.files;uploadInput.dispatchEvent(new Event('change'));}});
 
-        function setLanguage(lang) {
-            currentLang = lang; localStorage.setItem('lang', lang);
-            const t = translations[lang];
-            document.querySelector('#main-section p.text-lg').textContent = t.subtitle;
-            document.querySelector('#upload-box p.font-semibold').textContent = t.uploadBox;
-            document.querySelector('#upload-box p.text-sm').textContent = t.uploadHint;
-            document.getElementById('use-camera').textContent = t.cameraBtn;
-            document.getElementById('diagnose-button').textContent = t.diagnoseBtn;
-            document.getElementById('reset-button').textContent = t.resetBtn;
-            document.getElementById('lang-toggle').textContent = lang === 'en' ? 'ಕನ್ನಡ' : 'English';
-        }
-
-        document.getElementById('lang-toggle').onclick = () => setLanguage(currentLang === 'en' ? 'kn' : 'en');
-        setLanguage(currentLang);
-    </script>
+/* ---------- LANGUAGE ---------- */
+function setLanguage(lang){
+    currentLang=lang;localStorage.setItem('lang',lang);
+    const t=translations[lang];
+    document.querySelector('#main-section p.text-lg').textContent=t.subtitle;
+    document.querySelector('#upload-box p.font-semibold').textContent=t.uploadBox;
+    document.querySelector('#upload-box p.text-sm').textContent=t.uploadHint;
+    document.getElementById('use-camera').textContent=t.cameraBtn;
+    document.getElementById('diagnose-button').textContent=t.diagnoseBtn;
+    document.getElementById('reset-button').textContent=t.resetBtn;
+    document.getElementById('lang-toggle').textContent=lang==='en'?'ಕನ್ನಡ':'English';
+}
+document.getElementById('lang-toggle').onclick=()=>setLanguage(currentLang==='en'?'kn':'en');
+setLanguage(currentLang);
+</script>
 </body>
 </html>
