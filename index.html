@@ -6,122 +6,127 @@
     <title>Smart Plant Health Checker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {font-family:system-ui,-apple-system,sans-serif;background:#f7fdee;}
-        .card{box-shadow:0 10px 30px rgba(139,172,139,.2);transition:transform .3s,box-shadow .3s;}
-        .card:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(139,172,139,.3);}
-        #upload-box{border:3px dashed #8baf8b;transition:background .2s;cursor:pointer;}
-        #upload-box:hover{background:#f0f7f0;}
-        .focus-ring{box-shadow:0 0 0 3px rgba(139,172,139,.5);}
-        .loader{border:4px solid #f3f3f3;border-top:4px solid #4CAF50;border-radius:50%;width:24px;height:24px;display:inline-block;animation:spin 1s linear infinite;margin-right:.5rem;}
+        body {font-family:system-ui,-apple-system,sans-serif;background:#121212;color:#e5e5e5;}
+        .card{box-shadow:0 10px 30px rgba(0,0,0,.5);transition:transform .3s,box-shadow .3s;background:#1f2937;}
+        .card:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(0,0,0,.6);}
+        #upload-box{border:3px dashed #4b5563;transition:background .2s;cursor:pointer;}
+        #upload-box:hover{background:#374151;}
+        .focus-ring{box-shadow:0 0 0 3px rgba(75,85,99,.5);}
+        .loader{border:4px solid #4b5563;border-top:4px solid #10b981;border-radius:50%;width:24px;height:24px;display:inline-block;animation:spin 1s linear infinite;margin-right:.5rem;}
         @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
         #camera-modal{background:rgba(0,0,0,.8);z-index:50;}
         #video{width:100%;max-width:640px;}
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-6 md:p-8">
 
     <!-- Auth Section -->
-    <div id="auth-section" class="w-full max-w-md bg-white rounded-xl card p-6 md:p-10">
+    <div id="auth-section" class="w-full max-w-md bg-gray-800 rounded-xl card p-8 md:p-12">
         <div id="login-form-container">
-            <header class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-green-800 mb-2">Plant Doctor AI</h1>
-                <p class="text-lg text-gray-500">Please login to access the plant health checker.</p>
+            <header class="text-center mb-10">
+                <h1 class="text-4xl font-bold text-green-300 mb-3">Plant Doctor AI</h1>
+                <p class="text-lg text-gray-400">Please login to access the plant health checker.</p>
             </header>
-            <form id="login-form" class="space-y-4">
-                <div><label for="login-username" class="block text-gray-700 font-semibold mb-2">Username</label>
-                    <input type="text" id="login-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" required></div>
-                <div><label for="login-password" class="block text-gray-700 font-semibold mb-2">Password</label>
-                    <input type="password" id="login-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" required></div>
-                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-200 focus:outline-none focus-ring">Login</button>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="login-username" class="block text-gray-300 font-semibold mb-2">Username</label>
+                    <input type="text" id="login-username" class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 bg-gray-700 text-gray-100" required>
+                </div>
+                <div>
+                    <label for="login-password" class="block text-gray-300 font-semibold mb-2">Password</label>
+                    <input type="password" id="login-password" class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 bg-gray-700 text-gray-100" required>
+                </div>
+                <button type="submit" class="w-full bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition duration-200 focus:outline-none focus-ring">Login</button>
             </form>
-            <p class="text-center mt-4">Don't have an account? <a href="#" id="switch-to-signup" class="text-green-600 hover:underline">Sign up</a></p>
-            <p id="login-error" class="text-red-600 mt-4 text-center hidden">Invalid username or password. Please try again.</p>
+            <p class="text-center mt-6 text-gray-400">Don't have an account? <a href="#" id="switch-to-signup" class="text-green-500 hover:underline">Sign up</a></p>
+            <p id="login-error" class="text-red-500 mt-6 text-center hidden">Invalid username or password. Please try again.</p>
         </div>
 
         <div id="signup-form-container" class="hidden">
-            <header class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-green-800 mb-2">Plant Doctor AI</h1>
-                <p class="text-lg text-gray-500">Create an account to access the plant health checker.</p>
+            <header class="text-center mb-10">
+                <h1 class="text-4xl font-bold text-green-300 mb-3">Plant Doctor AI</h1>
+                <p class="text-lg text-gray-400">Create an account to access the plant health checker.</p>
             </header>
-            <form id="signup-form" class="space-y-4">
-                <div><label for="signup-username" class="block text-gray-700 font-semibold mb-2">Username</label>
-                    <input type="text" id="signup-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" required></div>
-                <div><label for="signup-password" class="block text-gray-700 font-semibold mb-2">Password</label>
-                    <input type="password" id="signup-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-green-500" required></div>
-                <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-200 focus:outline-none focus-ring">Sign Up</button>
+            <form id="signup-form" class="space-y-6">
+                <div>
+                    <label for="signup-username" class="block text-gray-300 font-semibold mb-2">Username</label>
+                    <input type="text" id="signup-username" class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 bg-gray-700 text-gray-100" required>
+                </div>
+                <div>
+                    <label for="signup-password" class="block text-gray-300 font-semibold mb-2">Password</label>
+                    <input type="password" id="signup-password" class="w-full px-4 py-3 border border-gray-600 rounded-lg focus:outline-none focus:border-green-500 bg-gray-700 text-gray-100" required>
+                </div>
+                <button type="submit" class="w-full bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition duration-200 focus:outline-none focus-ring">Sign Up</button>
             </form>
-            <p class="text-center mt-4">Already have an account? <a href="#" id="switch-to-login" class="text-green-600 hover:underline">Login</a></p>
-            <p id="signup-error" class="text-red-600 mt-4 text-center hidden">Username already exists or invalid input.</p>
-            <p id="signup-success" class="text-green-600 mt-4 text-center hidden">Account created successfully! Please login.</p>
+            <p class="text-center mt-6 text-gray-400">Already have an account? <a href="#" id="switch-to-login" class="text-green-500 hover:underline">Login</a></p>
+            <p id="signup-error" class="text-red-500 mt-6 text-center hidden">Username already exists or invalid input.</p>
+            <p id="signup-success" class="text-green-500 mt-6 text-center hidden">Account created successfully! Please login.</p>
         </div>
     </div>
 
     <!-- Main Section -->
-    <div id="main-section" class="hidden w-full max-w-4xl bg-white rounded-xl card p-6 md:p-10">
-        <header class="text-center mb-8 flex justify-between items-center">
-            <h1 class="text-4xl font-bold text-green-800 mb-2">Plant Doctor AI</h1>
-            <div class="flex gap-2">
-                <button id="lang-toggle" class="bg-indigo-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-indigo-700 transition duration-200 focus:outline-none focus-ring">ಕನ್ನಡ</button>
-                <button id="logout-button" class="bg-red-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-700 transition duration-200 focus:outline-none focus-ring">Logout</button>
+    <div id="main-section" class="hidden w-full max-w-4xl bg-gray-800 rounded-xl card p-8 md:p-12">
+        <header class="text-center mb-10 flex justify-between items-center">
+            <h1 class="text-4xl font-bold text-green-300 mb-3">Plant Doctor AI</h1>
+            <div class="flex gap-3">
+                <button id="lang-toggle" class="bg-indigo-700 text-white py-2 px-5 rounded-lg font-bold hover:bg-indigo-800 transition duration-200 focus:outline-none focus-ring">ಕನ್ನಡ</button>
+                <button id="logout-button" class="bg-red-700 text-white py-2 px-5 rounded-lg font-bold hover:bg-red-800 transition duration-200 focus:outline-none focus-ring">Logout</button>
             </div>
         </header>
-        <p class="text-lg text-gray-500 text-center mb-8">Upload a leaf image to get an instant diagnosis and treatment plan.</p>
-
+        <p class="text-lg text-gray-400 text-center mb-10">Upload a leaf image to get an instant diagnosis and treatment plan.</p>
         <div id="upload-section">
-            <div id="upload-box" onclick="triggerFileUpload()" class="flex flex-col items-center justify-center h-48 rounded-lg p-6 text-gray-600 hover:text-green-700 mb-4">
-                <svg class="w-12 h-12 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2m-5-8l-2-2m0 0L7 8m2-2v4"></path></svg>
-                <p class="font-semibold text-lg">Click or Drag & Drop your Plant Leaf Image</p>
-                <p class="text-sm text-gray-400">JPEG, PNG, or GIF up to 5MB</p>
+            <div id="upload-box" onclick="triggerFileUpload()" class="flex flex-col items-center justify-center h-52 rounded-lg p-8 text-gray-400 hover:text-green-300 mb-6 border-3 border-dashed border-gray-600">
+                <svg class="w-14 h-14 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2m-5-8l-2-2m0 0L7 8m2-2v4"></path></svg>
+                <p class="font-semibold text-xl">Click or Drag & Drop your Plant Leaf Image</p>
+                <p class="text-sm text-gray-500 mt-2">JPEG, PNG, or GIF up to 5MB</p>
             </div>
-            <button id="use-camera" class="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition duration-200 focus:outline-none focus-ring">Take Photo from Camera</button>
+            <button id="use-camera" class="w-full bg-blue-700 text-white py-3 rounded-lg font-bold hover:bg-blue-800 transition duration-200 focus:outline-none focus-ring">Take Photo from Camera</button>
             <input type="file" id="file-upload" accept="image/*" class="hidden" onchange="handleFileChange(event)">
         </div>
-
-        <div id="preview-section" class="hidden mt-6 p-4 border border-gray-200 rounded-lg">
-            <h2 class="text-xl font-semibold text-green-700 mb-4">Diagnosis Status</h2>
-            <div class="md:flex md:space-x-6">
-                <div class="mb-4 md:mb-0 md:w-1/3">
-                    <p class="text-gray-500 mb-2">Uploaded Image:</p>
+        <div id="preview-section" class="hidden mt-10 p-6 border border-gray-600 rounded-lg">
+            <h2 class="text-xl font-semibold text-green-300 mb-6">Diagnosis Status</h2>
+            <div class="md:flex md:space-x-8">
+                <div class="mb-6 md:mb-0 md:w-1/3">
+                    <p class="text-gray-400 mb-3">Uploaded Image:</p>
                     <img id="image-preview" class="w-full h-auto object-cover rounded-lg shadow-md" alt="Plant Leaf Preview">
                 </div>
                 <div class="md:w-2/3 flex flex-col justify-between">
-                    <div id="status-message" class="text-gray-700 text-base mb-4 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded">Please upload an image to start the analysis.</div>
-                    <button id="diagnose-button" onclick="startDiagnosis()" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition duration-200 focus:outline-none focus-ring disabled:opacity-50" disabled>Start AI Diagnosis (Needs Internet)</button>
-                    <button id="reset-button" onclick="resetApp()" class="w-full mt-2 bg-gray-300 text-gray-800 py-3 rounded-lg font-bold hover:bg-gray-400 transition duration-200 focus:outline-none focus-ring">Reset</button>
+                    <div id="status-message" class="text-gray-300 text-base mb-6 bg-yellow-900 border-l-4 border-yellow-600 p-4 rounded">Please upload an image to start the analysis.</div>
+                    <button id="diagnose-button" onclick="startDiagnosis()" class="w-full bg-green-700 text-white py-3 rounded-lg font-bold hover:bg-green-800 transition duration-200 focus:outline-none focus-ring disabled:opacity-50" disabled>Start AI Diagnosis (Needs Internet)</button>
+                    <button id="reset-button" onclick="resetApp()" class="w-full mt-4 bg-gray-600 text-gray-300 py-3 rounded-lg font-bold hover:bg-gray-500 transition duration-200 focus:outline-none focus-ring">Reset</button>
                 </div>
             </div>
         </div>
-
-        <div id="result-section" class="hidden mt-8">
-            <h2 class="text-3xl font-bold text-red-600 mb-6 border-b pb-2"><span id="diagnosis-emoji">Warning</span> Diagnosis Result</h2>
-            <div class="grid md:grid-cols-2 gap-6">
-                <div class="bg-red-50 p-6 rounded-xl border border-red-200">
-                    <h3 class="text-xl font-semibold text-red-700 mb-3">Identified Issue:</h3>
-                    <p id="result-diagnosis" class="text-2xl font-extrabold text-red-800"></p>
-                    <p id="result-plant-type" class="text-gray-600 mt-1"></p>
+        <div id="result-section" class="hidden mt-10">
+            <h2 class="text-3xl font-bold text-red-300 mb-8 border-b pb-3"><span id="diagnosis-emoji">Warning</span> Diagnosis Result</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-red-900 p-8 rounded-xl border border-red-700">
+                    <h3 class="text-xl font-semibold text-red-300 mb-4">Identified Issue:</h3>
+                    <p id="result-diagnosis" class="text-2xl font-extrabold text-red-200"></p>
+                    <p id="result-plant-type" class="text-gray-400 mt-2"></p>
                 </div>
-                <div class="bg-green-50 p-6 rounded-xl border border-green-200">
-                    <h3 class="text-xl font-semibold text-green-700 mb-3">AI Confidence:</h3>
-                    <p id="result-confidence" class="text-2xl font-extrabold text-green-800"></p>
+                <div class="bg-green-900 p-8 rounded-xl border border-green-700">
+                    <h3 class="text-xl font-semibold text-green-300 mb-4">AI Confidence:</h3>
+                    <p id="result-confidence" class="text-2xl font-extrabold text-green-200"></p>
                 </div>
             </div>
-            <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-lg">
-                <h3 class="text-2xl font-bold text-green-800 mb-4 flex items-center">
-                    <svg class="w-6 h-6 mr-2 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.204A9.954 9.954 0 0012 3c-4.419 0-8.24 1.803-10.618 4.796m14.236 0c.2.469.366.97.485 1.504M20 10.5c0 .324.015.645.044.966M12 21c-2.41 0-4.63-.642-6.556-1.754M17.152 14.848l-1.424-1.424m-1.424-1.424l-1.424-1.424"></path></svg>
+            <div class="mt-8 bg-gray-700 p-8 rounded-xl border border-gray-600 shadow-lg">
+                <h3 class="text-2xl font-bold text-green-300 mb-5 flex items-center">
+                    <svg class="w-7 h-7 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.204A9.954 9.954 0 0012 3c-4.419 0-8.24 1.803-10.618 4.796m14.236 0c.2.469.366.97.485 1.504M20 10.5c0 .324.015.645.044.966M12 21c-2.41 0-4.63-.642-6.556-1.754M17.152 14.848l-1.424-1.424m-1.424-1.424l-1.424-1.424"></path></svg>
                     Recommended Treatment Plan
                 </h3>
-                <p id="result-treatment" class="text-gray-700 whitespace-pre-wrap"></p>
+                <p id="result-treatment" class="text-gray-300 whitespace-pre-wrap"></p>
             </div>
         </div>
     </div>
 
     <!-- Camera Modal -->
     <div id="camera-modal" class="hidden fixed inset-0 flex items-center justify-center">
-        <div class="bg-white p-4 rounded-lg shadow-lg">
+        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
             <video id="video" autoplay playsinline></video>
-            <div class="mt-4 flex justify-between">
-                <button id="capture-button" class="bg-green-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-green-700">Capture</button>
-                <button id="close-camera" class="bg-gray-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-gray-700">Close</button>
+            <div class="mt-6 flex justify-between">
+                <button id="capture-button" class="bg-green-700 text-white py-3 px-6 rounded-lg font-bold hover:bg-green-800">Capture</button>
+                <button id="close-camera" class="bg-gray-600 text-white py-3 px-6 rounded-lg font-bold hover:bg-gray-500">Close</button>
             </div>
         </div>
     </div>
@@ -130,263 +135,422 @@
         /* ----------  LANGUAGE DICTIONARY ---------- */
         const translations = {
             en: {
-                title:"Plant Doctor AI",subtitle:"Upload a leaf image to get an instant diagnosis and treatment plan.",
-                uploadBox:"Click or Drag & Drop your Plant Leaf Image",uploadHint:"JPEG, PNG, or GIF up to 5MB",
-                cameraBtn:"Take Photo from Camera",diagnoseBtn:"Start AI Diagnosis (Needs Internet)",resetBtn:"Reset",
-                diagnosisStatus:"Diagnosis Status",uploadedImage:"Uploaded Image:",readyMsg:"Image uploaded successfully. Ready for AI diagnosis (connect to internet to proceed).",
-                analyzingMsg:"Sending image to AI for deep analysis... This may take a moment.",noInternet:"No internet connection detected. Diagnosis requires online access to AI.",
-                resultHeader:"Diagnosis Result",identifiedIssue:"Identified Issue:",confidence:"AI Confidence:",treatmentHeader:"Recommended Treatment Plan",
-                loginHeader:"Plant Doctor AI",loginSub:"Please login to access the plant health checker.",username:"Username",password:"Password",loginBtn:"Login",
-                noAccount:"Don't have an account? <a href='#' id='switch-to-signup' class='text-green-600 hover:underline'>Sign up</a>",
-                signupHeader:"Plant Doctor AI",signupSub:"Create an account to access the plant health checker.",signupBtn:"Sign Up",
-                haveAccount:"Already have an account? <a href='#' id='switch-to-login' class='text-green-600 hover:underline'>Login</a>",logoutBtn:"Logout"
+                title: "Plant Doctor AI",
+                subtitle: "Upload a leaf image to get an instant diagnosis and treatment plan.",
+                uploadBox: "Click or Drag & Drop your Plant Leaf Image",
+                uploadHint: "JPEG, PNG, or GIF up to 5MB",
+                cameraBtn: "Take Photo from Camera",
+                diagnoseBtn: "Start AI Diagnosis (Needs Internet)",
+                resetBtn: "Reset",
+                diagnosisStatus: "Diagnosis Status",
+                uploadedImage: "Uploaded Image:",
+                readyMsg: "Image uploaded successfully. Ready for AI diagnosis (connect to internet to proceed).",
+                analyzingMsg: "Sending image to AI for deep analysis... This may take a moment.",
+                noInternet: "No internet connection detected. Diagnosis requires online access to AI.",
+                resultHeader: "Diagnosis Result",
+                identifiedIssue: "Identified Issue:",
+                confidence: "AI Confidence:",
+                treatmentHeader: "Recommended Treatment Plan",
+                loginHeader: "Plant Doctor AI",
+                loginSub: "Please login to access the plant health checker.",
+                username: "Username",
+                password: "Password",
+                loginBtn: "Login",
+                noAccount: "Don't have an account? <a href='#' id='switch-to-signup' class='text-green-500 hover:underline'>Sign up</a>",
+                signupHeader: "Plant Doctor AI",
+                signupSub: "Create an account to access the plant health checker.",
+                signupBtn: "Sign Up",
+                haveAccount: "Already have an account? <a href='#' id='switch-to-login' class='text-green-500 hover:underline'>Login</a>",
+                logoutBtn: "Logout"
             },
             kn: {
-                title:"ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",subtitle:"ಒಂದು ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ತಕ್ಷಣ ರೋಗನಿರ್ಣಯ ಮತ್ತು ಚಿಕಿತ್ಸಾ ಯೋಜನೆ ಪಡೆಯಿರಿ.",
-                uploadBox:"ನಿಮ್ಮ ಸಸ್ಯದ ಎಲೆಯ ಚಿತ್ರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ & ಡ್ರಾಪ್ ಮಾಡಿ",uploadHint:"JPEG, PNG, ಅಥವಾ GIF 5MB ವರೆಗೆ",
-                cameraBtn:"ಕ್ಯಾಮೆರಾದಿಂದ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ",diagnoseBtn:"AI ರೋಗನಿರ್ಣಯ ಪ್ರಾರಂಭಿಸಿ (ಇಂಟರ್ನೆಟ್ ಅಗತ್ಯ)",resetBtn:"ಮರುಹೊಂದಿಸಿ",
-                diagnosisStatus:"ರೋಗನಿರ್ಣಯ ಸ್ಥಿತಿ",uploadedImage:"ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಚಿತ್ರ:",readyMsg:"ಚಿತ್ರ ಯಶಸ್ವಿಯಾಗಿ ಅಪ್‌ಲೋಡ್ ಆಯಿತು. AI ರೋಗನಿರ್ಣಯಕ್ಕೆ ಸಿದ್ಧ (ಇಂಟರ್ನೆಟ್‌ಗೆ ಸಂಪರ್ಕಿಸಿ).",
-                analyzingMsg:"ಚಿತ್ರವನ್ನು AI ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ... ಸ್ವಲ್ಪ ಸಮಯ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.",noInternet:"ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಕಂಡುಬಂದಿಲ್ಲ. ರೋಗನಿರ್ಣಯಕ್ಕೆ ಆನ್‌ಲೈನ್ ಪ್ರವೇಶ ಅಗತ್ಯ.",
-                resultHeader:"ರೋಗನಿರ್ಣಯ ಫಲಿತಾಂಶ",identifiedIssue:"ಗುರುತಿಸಲಾದ ಸಮಸ್ಯೆ:",confidence:"AI ವಿಶ್ವಾಸ:",treatmentHeader:"ಶಿಫಾರಸು ಮಾಡಲಾದ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
-                loginHeader:"ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",loginSub:"ಪ್ಲಾಂಟ್ ಹೆಲ್ತ್ ಚೆಕರ್ ಬಳಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ.",username:"ಬಳಕೆದಾರ ಹೆಸರು",password:"ಗುಪ್ತಪದ",loginBtn:"ಲಾಗಿನ್",
-                noAccount:"ಖಾತೆ ಇಲ್ಲವೇ? <a href='#' id='switch-to-signup' class='text-green-600 hover:underline'>ಸೈನ್ ಅಪ್</a>",
-                signupHeader:"ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",signupSub:"ಪ್ಲಾಂಟ್ ಹೆಲ್ತ್ ಚೆಕರ್ ಬಳಸಲು ಖಾತೆ ರಚಿಸಿ.",signupBtn:"ಸೈನ್ ಅಪ್",
-                haveAccount:"ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? <a href='#' id='switch-to-login' class='text-green-600 hover:underline'>ಲಾಗಿನ್</a>",logoutBtn:"ಲಾಗೌಟ್"
+                title: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",
+                subtitle: "ಒಂದು ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ತಕ್ಷಣ ರೋಗನಿರ್ಣಯ ಮತ್ತು ಚಿಕಿತ್ಸಾ ಯೋಜನೆ ಪಡೆಯಿರಿ.",
+                uploadBox: "ನಿಮ್ಮ ಸಸ್ಯದ ಎಲೆಯ ಚಿತ್ರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ & ಡ್ರಾಪ್ ಮಾಡಿ",
+                uploadHint: "JPEG, PNG, ಅಥವಾ GIF 5MB ವರೆಗೆ",
+                cameraBtn: "ಕ್ಯಾಮೆರಾದಿಂದ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ",
+                diagnoseBtn: "AI ರೋಗನಿರ್ಣಯ ಪ್ರಾರಂಭಿಸಿ (ಇಂಟರ್ನೆಟ್ ಅಗತ್ಯ)",
+                resetBtn: "ಮರುಹೊಂದಿಸಿ",
+                diagnosisStatus: "ರೋಗನಿರ್ಣಯ ಸ್ಥಿತಿ",
+                uploadedImage: "ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಚಿತ್ರ:",
+                readyMsg: "ಚಿತ್ರ ಯಶಸ್ವಿಯಾಗಿ ಅಪ್‌ಲೋಡ್ ಆಯಿತು. AI ರೋಗನಿರ್ಣಯಕ್ಕೆ ಸಿದ್ಧ (ಇಂಟರ್ನೆಟ್‌ಗೆ ಸಂಪರ್ಕಿಸಿ).",
+                analyzingMsg: "ಚಿತ್ರವನ್ನು AI ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ... ಸ್ವಲ್ಪ ಸಮಯ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+                noInternet: "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಕಂಡುಬಂದಿಲ್ಲ. ರೋಗನಿರ್ಣಯಕ್ಕೆ ಆನ್‌ಲೈನ್ ಪ್ರವೇಶ ಅಗತ್ಯ.",
+                resultHeader: "ರೋಗನಿರ್ಣಯ ಫಲಿತಾಂಶ",
+                identifiedIssue: "ಗುರುತಿಸಲಾದ ಸಮಸ್ಯೆ:",
+                confidence: "AI ವಿಶ್ವಾಸ:",
+                treatmentHeader: "ಶಿಫಾರಸು ಮಾಡಲಾದ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
+                loginHeader: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",
+                loginSub: "ಪ್ಲಾಂಟ್ ಹೆಲ್ತ್ ಚೆಕರ್ ಬಳಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ.",
+                username: "ಬಳಕೆದಾರ ಹೆಸರು",
+                password: "ಗುಪ್ತಪದ",
+                loginBtn: "ಲಾಗಿನ್",
+                noAccount: "ಖಾತೆ ಇಲ್ಲವೇ? <a href='#' id='switch-to-signup' class='text-green-500 hover:underline'>ಸೈನ್ ಅಪ್</a>",
+                signupHeader: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",
+                signupSub: "ಪ್ಲಾಂಟ್ ಹೆಲ್ತ್ ಚೆಕರ್ ಬಳಸಲು ಖಾತೆ ರಚಿಸಿ.",
+                signupBtn: "ಸೈನ್ ಅಪ್",
+                haveAccount: "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? <a href='#' id='switch-to-login' class='text-green-500 hover:underline'>ಲಾಗಿನ್</a>",
+                logoutBtn: "ಲಾಗೌಟ್"
             }
         };
 
         let currentLang = localStorage.getItem('lang') || 'en';
-
-        /* ----------  LANGUAGE SWITCHING ---------- */
-        function setLanguage(lang){
-            if(lang===currentLang) return;
-            currentLang=lang; const t=translations[lang]; localStorage.setItem('lang',lang);
-            document.querySelector('#main-section h1').textContent=t.title;
-            document.querySelector('#main-section p.text-lg').textContent=t.subtitle;
-            document.getElementById('logout-button').textContent=t.logoutBtn;
-            document.getElementById('lang-toggle').textContent=(lang==='en'?'ಕನ್ನಡ':'English');
-            document.querySelector('#upload-box p.font-semibold').textContent=t.uploadBox;
-            document.querySelector('#upload-box p.text-sm').textContent=t.uploadHint;
-            document.getElementById('use-camera').textContent=t.cameraBtn;
-            document.querySelector('#preview-section h2').textContent=t.diagnosisStatus;
-            document.querySelector('#preview-section p.text-gray-500').textContent=t.uploadedImage;
-            document.getElementById('diagnose-button').textContent=t.diagnoseBtn;
-            document.getElementById('reset-button').textContent=t.resetBtn;
-            document.querySelector('#result-section h2').innerHTML=`<span id="diagnosis-emoji">Warning</span> ${t.resultHeader}`;
-            document.querySelector('#result-section .bg-red-50 h3').textContent=t.identifiedIssue;
-            document.querySelector('#result-section .bg-green-50 h3').textContent=t.confidence;
-            document.querySelector('#result-section h3.text-2xl').textContent=t.treatmentHeader;
-            document.querySelectorAll('#auth-section h1').forEach(h=>h.textContent=t.loginHeader);
-            document.querySelector('#login-form-container p.text-lg').textContent=t.loginSub;
-            document.querySelector('#signup-form-container p.text-lg').textContent=t.signupSub;
-            document.querySelector('#login-form label[for="login-username"]').textContent=t.username;
-            document.querySelector('#login-form label[for="login-password"]').textContent=t.password;
-            document.querySelector('#login-form button[type="submit"]').textContent=t.loginBtn;
-            document.querySelector('#login-form-container p.mt-4').innerHTML=t.noAccount;
-            document.querySelector('#signup-form label[for="signup-username"]').textContent=t.username;
-            document.querySelector('#signup-form label[for="signup-password"]').textContent=t.password;
-            document.querySelector('#signup-form button[type="submit"]').textContent=t.signupBtn;
-            document.querySelector('#signup-form-container p.mt-4').innerHTML=t.haveAccount;
-        }
-        document.getElementById('lang-toggle').addEventListener('click',()=>setLanguage(currentLang==='en'?'kn':'en'));
-
-        /* ----------  PERSISTENT LOGIN ---------- */
         const LOGGED_USER_KEY = 'plantDoctorLoggedUser';
 
-        function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
-        function saveUsers(u){localStorage.setItem('users',JSON.stringify(u));}
-        function setLoggedIn(username){
-            localStorage.setItem(LOGGED_USER_KEY,username);
+        function getUsers() {
+            return JSON.parse(localStorage.getItem('users') || '[]');
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        function setLoggedIn(username) {
+            localStorage.setItem(LOGGED_USER_KEY, username);
             document.getElementById('auth-section').classList.add('hidden');
             document.getElementById('main-section').classList.remove('hidden');
             setLanguage(currentLang);
         }
-        function logout(){
+
+        function logout() {
             localStorage.removeItem(LOGGED_USER_KEY);
             document.getElementById('main-section').classList.add('hidden');
             document.getElementById('auth-section').classList.remove('hidden');
             document.getElementById('login-form-container').classList.remove('hidden');
             document.getElementById('signup-form-container').classList.add('hidden');
-            document.getElementById('login-username').value='';
-            document.getElementById('login-password').value='';
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
             document.getElementById('login-error').classList.add('hidden');
             resetApp();
             setLanguage(currentLang);
         }
 
-        // Check for already logged-in user on load
-        window.addEventListener('load',()=>{
-            const savedUser = localStorage.getItem(LOGGED_USER_KEY);
-            if(savedUser && getUsers().some(u=>u.username===savedUser)){
-                setLoggedIn(savedUser);
-            }else{
-                setLanguage(currentLang);   // still apply language to login screen
-            }
-        });
-
-        // Switch forms
-        document.getElementById('switch-to-signup').addEventListener('click',e=>{e.preventDefault();
+        // Switch between login and signup
+        document.getElementById('switch-to-signup').addEventListener('click', (e) => {
+            e.preventDefault();
             document.getElementById('login-form-container').classList.add('hidden');
             document.getElementById('signup-form-container').classList.remove('hidden');
-            setLanguage(currentLang);
         });
-        document.getElementById('switch-to-login').addEventListener('click',e=>{e.preventDefault();
+
+        document.getElementById('switch-to-login').addEventListener('click', (e) => {
+            e.preventDefault();
             document.getElementById('signup-form-container').classList.add('hidden');
             document.getElementById('login-form-container').classList.remove('hidden');
-            setLanguage(currentLang);
         });
 
-        // Signup
-        document.getElementById('signup-form').addEventListener('submit',e=>{
+        // Signup handling
+        document.getElementById('signup-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const u=document.getElementById('signup-username').value.trim();
-            const p=document.getElementById('signup-password').value.trim();
-            if(!u||!p){
-                document.getElementById('signup-error').textContent=currentLang==='en'?'Please enter both username and password.':'ದಯವಿಟ್ಟು ಬಳಕೆದಾರ ಹೆಸರು ಮತ್ತು ಗುಪ್ತಪದವನ್ನು ನಮೂದಿಸಿ.';
+            const username = document.getElementById('signup-username').value.trim();
+            const password = document.getElementById('signup-password').value.trim();
+
+            if (!username || !password) {
+                document.getElementById('signup-error').textContent = 'Please enter both username and password.';
                 document.getElementById('signup-error').classList.remove('hidden');
                 document.getElementById('signup-success').classList.add('hidden');
                 return;
             }
-            const users=getUsers();
-            if(users.some(x=>x.username===u)){
-                document.getElementById('signup-error').textContent=currentLang==='en'?'Username already exists.':'ಬಳಕೆದಾರ ಹೆಸರು ಈಗಾಗಲೇ ಇದೆ.';
+
+            let users = getUsers();
+            if (users.some(user => user.username === username)) {
+                document.getElementById('signup-error').textContent = 'Username already exists.';
                 document.getElementById('signup-error').classList.remove('hidden');
                 document.getElementById('signup-success').classList.add('hidden');
                 return;
             }
-            users.push({username:u,password:p}); saveUsers(users);
+
+            users.push({ username, password });
+            saveUsers(users);
+
             document.getElementById('signup-error').classList.add('hidden');
             document.getElementById('signup-success').classList.remove('hidden');
-            document.getElementById('signup-username').value=''; document.getElementById('signup-password').value='';
-            setTimeout(()=>{document.getElementById('signup-form-container').classList.add('hidden');
+
+            document.getElementById('signup-username').value = '';
+            document.getElementById('signup-password').value = '';
+
+            setTimeout(() => {
+                document.getElementById('signup-form-container').classList.add('hidden');
                 document.getElementById('login-form-container').classList.remove('hidden');
-                document.getElementById('signup-success').classList.add('hidden');},2000);
+                document.getElementById('signup-success').classList.add('hidden');
+            }, 2000);
         });
 
-        // Login
-        document.getElementById('login-form').addEventListener('submit',e=>{
+        // Login handling
+        document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const u=document.getElementById('login-username').value.trim();
-            const p=document.getElementById('login-password').value.trim();
-            const users=getUsers();
-            const user=users.find(x=>x.username===u && x.password===p);
-            if(user){
-                setLoggedIn(u);   // persist login
-            }else{
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                setLoggedIn(username);
+            } else {
                 document.getElementById('login-error').classList.remove('hidden');
             }
         });
 
-        // Logout
-        document.getElementById('logout-button').addEventListener('click',logout);
+        // Logout handling
+        document.getElementById('logout-button').addEventListener('click', logout);
 
-        // Camera
-        const useCamera=document.getElementById('use-camera'),cameraModal=document.getElementById('camera-modal'),video=document.getElementById('video'),captureBtn=document.getElementById('capture-button'),closeCam=document.getElementById('close-camera');
-        useCamera.addEventListener('click',()=>{cameraModal.classList.remove('hidden');
-            navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(s=>{video.srcObject=s;}).catch(()=>{alert('Camera access denied.');cameraModal.classList.add('hidden');});
+        // Camera handling
+        const useCamera = document.getElementById('use-camera');
+        const cameraModal = document.getElementById('camera-modal');
+        const video = document.getElementById('video');
+        const captureButton = document.getElementById('capture-button');
+        const closeCamera = document.getElementById('close-camera');
+
+        useCamera.addEventListener('click', () => {
+            cameraModal.classList.remove('hidden');
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+                .then(stream => {
+                    video.srcObject = stream;
+                })
+                .catch(err => {
+                    console.error('Error accessing camera:', err);
+                    alert('Could not access camera. Please check permissions.');
+                    cameraModal.classList.add('hidden');
+                });
         });
-        captureBtn.addEventListener('click',()=>{const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;c.getContext('2d').drawImage(video,0,0);
-            c.toBlob(b=>{const f=new File([b],'camera_photo.jpg',{type:'image/jpeg'});const dt=new DataTransfer();dt.items.add(f);
-                uploadInput.files=dt.files;handleFileChange({target:{files:uploadInput.files}});cameraModal.classList.add('hidden');video.srcObject.getTracks().forEach(t=>t.stop());},'image/jpeg');
+
+        captureButton.addEventListener('click', () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                const file = new File([blob], 'camera_photo.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                uploadInput.files = dataTransfer.files;
+                handleFileChange({ target: { files: uploadInput.files } });
+                cameraModal.classList.add('hidden');
+                video.srcObject.getTracks().forEach(track => track.stop());
+            }, 'image/jpeg');
         });
-        closeCam.addEventListener('click',()=>{cameraModal.classList.add('hidden');if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());});
 
-        // Core AI logic (unchanged except for language strings)
-        const apiKey="AIzaSyDgcYJ9YCcEmkIpwhpanXKIwO3ymVNYa4g";
-        const API_URL=`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-        let uploadedFileBase64=null;
-        const uploadInput=document.getElementById('file-upload'),uploadBox=document.getElementById('upload-box'),previewSection=document.getElementById('preview-section'),resultSection=document.getElementById('result-section'),diagnoseButton=document.getElementById('diagnose-button'),imagePreview=document.getElementById('image-preview'),statusMessage=document.getElementById('status-message');
-
-        function fileToBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
-        function triggerFileUpload(){uploadInput.click();}
-        function handleFileChange(e){
-            const file=e.target.files[0]; if(!file) return;
-            if(file.size>5*1024*1024){
-                statusMessage.innerHTML=currentLang==='en'?'File too large. Max 5 MB.':'ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ. ಗರಿಷ್ಠ 5 MB.';
-                statusMessage.classList.remove('bg-blue-50');statusMessage.classList.add('bg-red-50','border-red-400');uploadInput.value='';return;
+        closeCamera.addEventListener('click', () => {
+            cameraModal.classList.add('hidden');
+            if (video.srcObject) {
+                video.srcObject.getTracks().forEach(track => track.stop());
             }
-            fileToBase64(file).then(b=>{uploadedFileBase64=b;imagePreview.src=URL.createObjectURL(file);
-                document.getElementById('upload-section').classList.add('hidden');previewSection.classList.remove('hidden');resultSection.classList.add('hidden');
-                statusMessage.innerHTML=translations[currentLang].readyMsg;
-                statusMessage.classList.remove('bg-yellow-50','border-yellow-400','bg-red-50','border-red-400');statusMessage.classList.add('bg-blue-50','border-blue-400');
-                diagnoseButton.disabled=false;diagnoseButton.innerHTML=translations[currentLang].diagnoseBtn;
-            }).catch(()=>{statusMessage.innerHTML=currentLang==='en'?'Could not process file.':'ಫೈಲ್ ಪ್ರಕ್ರಿಯೆಗೊಳ್ಳಲಾಗಲಿಲ್ಲ.';statusMessage.classList.add('bg-red-50','border-red-400');});
+        });
+
+        // SAME JAVASCRIPT AS BEFORE (API still needs internet)
+        const apiKey = "AIzaSyDgcYJ9YCcEmkIpwhpanXKIwO3ymVNYa4g";
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;  // Updated to valid model
+        
+        let uploadedFileBase64 = null;
+        const uploadInput = document.getElementById('file-upload');
+        const uploadBox = document.getElementById('upload-box');
+        const previewSection = document.getElementById('preview-section');
+        const resultSection = document.getElementById('result-section');
+        const diagnoseButton = document.getElementById('diagnose-button');
+        const imagePreview = document.getElementById('image-preview');
+        const statusMessage = document.getElementById('status-message');
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
         }
-        function resetApp(){
-            uploadedFileBase64=null;uploadInput.value='';diagnoseButton.disabled=true;
-            document.getElementById('upload-section').classList.remove('hidden');previewSection.classList.add('hidden');resultSection.classList.add('hidden');
-            statusMessage.innerHTML=translations[currentLang].readyMsg;
-            statusMessage.classList.remove('bg-blue-50','border-blue-400','bg-red-50','border-red-400','bg-green-50','border-green-400');statusMessage.classList.add('bg-yellow-50','border-yellow-400');
-            document.getElementById('diagnosis-emoji').textContent='Warning';
+
+        function triggerFileUpload() {
+            uploadInput.click();
         }
-        function setLoading(l){
-            diagnoseButton.disabled=l;
-            if(l){diagnoseButton.innerHTML=`<div class="loader"></div>${currentLang==='en'?'Analyzing...':'ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...'}`;
-                statusMessage.innerHTML=translations[currentLang].analyzingMsg;
-                statusMessage.classList.remove('bg-blue-50','border-blue-400');statusMessage.classList.add('bg-yellow-50','border-yellow-400');
-            }else{diagnoseButton.innerHTML=translations[currentLang].diagnoseBtn;}
+
+        function handleFileChange(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (file.size > 5 * 1024 * 1024) {
+                statusMessage.innerHTML = 'File too large. Max size is 5MB. Please choose a smaller image.';
+                statusMessage.classList.remove('bg-blue-50');
+                statusMessage.classList.add('bg-red-900', 'border-red-700');
+                uploadInput.value = '';
+                return;
+            }
+            fileToBase64(file).then(base64Data => {
+                uploadedFileBase64 = base64Data;
+                imagePreview.src = URL.createObjectURL(file);
+                
+                document.getElementById('upload-section').classList.add('hidden');
+                previewSection.classList.remove('hidden');
+                resultSection.classList.add('hidden');
+                
+                statusMessage.innerHTML = 'Image uploaded successfully. Ready for AI diagnosis (connect to internet to proceed).';
+                statusMessage.classList.remove('bg-yellow-900', 'border-yellow-600', 'bg-red-900', 'border-red-700');
+                statusMessage.classList.add('bg-blue-900', 'border-blue-700');
+                diagnoseButton.disabled = false;
+                diagnoseButton.innerHTML = 'Start AI Diagnosis (Needs Internet)';
+            }).catch(error => {
+                console.error("File processing error:", error);
+                statusMessage.innerHTML = 'Could not process file. Check console for details.';
+                statusMessage.classList.remove('bg-blue-900');
+                statusMessage.classList.add('bg-red-900', 'border-red-700');
+            });
         }
-        async function startDiagnosis(){
-            if(!uploadedFileBase64) return; setLoading(true);
-            if(!navigator.onLine){setLoading(false);statusMessage.innerHTML=translations[currentLang].noInternet;statusMessage.classList.add('bg-red-50','border-red-400');return;}
-            const systemPrompt=`You are a world-class plant pathologist and agricultural expert. Analyze the provided image of the plant leaf.
-1. Identify the Plant Type (e.g., Tomato, Apple, Corn).
-2. Identify the Disease (or state 'Healthy' if no disease is present).
-3. Provide a detailed Treatment Plan (for disease) or Care Plan (for healthy) in 3-5 concise, actionable steps.
-4. Output ONLY a single JSON object that strictly follows the provided schema. Do not add any extra text or markdown outside the JSON block.`;
-            const userQuery="Analyze this plant leaf image. Identify the plant, the health status, and provide the appropriate care/treatment plan.";
-            const responseSchema={type:"OBJECT",properties:{"plantType":{type:"STRING"},"diseaseName":{type:"STRING"},"confidenceScore":{type:"NUMBER"},"treatmentPlan":{type:"STRING"}},required:["plantType","diseaseName","confidenceScore","treatmentPlan"]};
-            const payload={contents:[{role:"user",parts:[{text:userQuery},{inlineData:{mimeType:uploadInput.files[0].type||"image/jpeg",data:uploadedFileBase64}}]}],systemInstruction:{parts:[{text:systemPrompt}]},generationConfig:{responseMimeType:"application/json",responseSchema}};
-            const maxRetries=3; for(let a=0;a<maxRetries;a++){
-                try{
-                    const r=await fetch(API_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-                    if(r.status===429 && a<maxRetries-1){await new Promise(res=>setTimeout(res,Math.pow(2,a)*1000));continue;}
-                    if(!r.ok) throw new Error(`HTTP ${r.status}`);
-                    const j=await r.json(); const txt=j.candidates?.[0]?.content?.parts?.[0]?.text;
-                    if(!txt) throw new Error("No AI response");
-                    const data=JSON.parse(txt); setLoading(false); displayResults(data); return;
-                }catch(err){
-                    console.error(err);
-                    if(a===maxRetries-1){
-                        statusMessage.innerHTML=`${currentLang==='en'?'Diagnosis failed. Error:':'ರೋಗನಿರ್ಣಯ ವಿಫಲ. ದೋಷ:'} ${err.message}. ${currentLang==='en'?'Try later.':'ನಂತರ ಪ್ರಯತ್ನಿಸಿ.'}`;
-                        statusMessage.classList.remove('bg-yellow-50','border-yellow-400');statusMessage.classList.add('bg-red-50','border-red-400');
+
+        function resetApp() {
+            uploadedFileBase64 = null;
+            uploadInput.value = '';
+            diagnoseButton.disabled = true;
+           
+            document.getElementById('upload-section').classList.remove('hidden');
+            previewSection.classList.add('hidden');
+            resultSection.classList.add('hidden');
+           
+            statusMessage.innerHTML = 'Please upload an image to start the analysis.';
+            statusMessage.classList.remove('bg-blue-900', 'border-blue-700', 'bg-red-900', 'border-red-700', 'bg-green-900', 'border-green-700');
+            statusMessage.classList.add('bg-yellow-900', 'border-yellow-600');
+            document.getElementById('diagnosis-emoji').textContent = '🦠';
+        }
+
+        function setLoading(isLoading) {
+            diagnoseButton.disabled = isLoading;
+            if (isLoading) {
+                diagnoseButton.innerHTML = `
+                    <div class="loader"></div>
+                    Analyzing...
+                `;
+                statusMessage.innerHTML = 'Sending image to AI for deep analysis... This may take a moment.';
+                statusMessage.classList.remove('bg-blue-900', 'border-blue-700');
+                statusMessage.classList.add('bg-yellow-900', 'border-yellow-600');
+            } else {
+                diagnoseButton.innerHTML = 'Start AI Diagnosis (Needs Internet)';
+            }
+        }
+
+        async function startDiagnosis() {
+            if (!uploadedFileBase64) return;
+           
+            setLoading(true);
+           
+            // Offline warning if no connection (simple check)
+            if (!navigator.onLine) {
+                setLoading(false);
+                statusMessage.innerHTML = 'No internet connection detected. Diagnosis requires online access to AI.';
+                statusMessage.classList.add('bg-red-900', 'border-red-700');
+                return;
+            }
+           
+            const systemPrompt = `You are a world-class plant pathologist and agricultural expert. Analyze the provided image of the plant leaf.
+            1. Identify the Plant Type (e.g., Tomato, Apple, Corn).
+            2. Identify the Disease (or state 'Healthy' if no disease is present).
+            3. Provide a detailed Treatment Plan (for disease) or Care Plan (for healthy) in 3-5 concise, actionable steps.
+            4. Output ONLY a single JSON object that strictly follows the provided schema. Do not add any extra text or markdown outside the JSON block.`;
+            const userQuery = "Analyze this plant leaf image. Identify the plant, the health status, and provide the appropriate care/treatment plan.";
+            const responseSchema = {
+                type: "OBJECT",
+                properties: {
+                    "plantType": { "type": "STRING" },
+                    "diseaseName": { "type": "STRING" },
+                    "confidenceScore": { "type": "NUMBER" },
+                    "treatmentPlan": { "type": "STRING" }
+                },
+                required: ["plantType", "diseaseName", "confidenceScore", "treatmentPlan"]
+            };
+            const payload = {
+                contents: [
+                    {
+                        role: "user",
+                        parts: [
+                            { text: userQuery },
+                            {
+                                inlineData: {
+                                    mimeType: uploadInput.files[0].type || "image/jpeg",
+                                    data: uploadedFileBase64
+                                }
+                            }
+                        ]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                }
+            };
+            const maxRetries = 3;
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.status === 429 && attempt < maxRetries - 1) {
+                        const delay = Math.pow(2, attempt) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        continue;
+                    }
+                    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                    const result = await response.json();
+                    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+                    if (!text) throw new Error("No response from AI");
+                    const responseData = JSON.parse(text);
+                    setLoading(false);
+                    displayResults(responseData);
+                    return;
+                } catch (error) {
+                    console.error("API Error:", error);
+                    if (attempt === maxRetries - 1) {
+                        statusMessage.innerHTML = `Diagnosis failed. Error: ${error.message}. Try again later or check connection.`;
+                        statusMessage.classList.remove('bg-yellow-900', 'border-yellow-600');
+                        statusMessage.classList.add('bg-red-900', 'border-red-700');
                     }
                 }
-            } setLoading(false);
+            }
+            setLoading(false);
         }
-        function displayResults(d){
-            if(!d) return;
-            const healthy=d.diseaseName.toLowerCase()==='healthy';
-            const conf=(d.confidenceScore*100).toFixed(1);
-            const emoji=healthy?'Healthy':'Warning';
-            const t=translations[currentLang];
-            document.getElementById('diagnosis-emoji').textContent=emoji;
-            document.getElementById('result-diagnosis').textContent=d.diseaseName;
-            document.getElementById('result-plant-type').textContent=`${currentLang==='en'?'Plant Type:':'ಸಸ್ಯದ ಪ್ರಕಾರ:'} ${d.plantType}`;
-            document.getElementById('result-confidence').textContent=`${conf}%`;
-            document.getElementById('result-treatment').textContent=d.treatmentPlan;
-            statusMessage.innerHTML=`${currentLang==='en'?'Diagnosis complete! Result:':'ರೋಗನಿರ್ಣಯ ಪೂರ್ಣ! ಫಲಿತಾಂಶ:'} <strong>${d.diseaseName}</strong>`;
-            statusMessage.className=`text-gray-700 text-base mb-4 p-3 rounded ${healthy?'bg-green-50 border-l-4 border-green-400':'bg-red-50 border-l-4 border-red-400'}`;
+        function displayResults(data) {
+            if (!data) return;
+            const isHealthy = data.diseaseName.toLowerCase() === 'healthy';
+            const confidence = (data.confidenceScore * 100).toFixed(1);
+            const emoji = isHealthy ? '🌱' : '⚠️';
+            document.getElementById('diagnosis-emoji').textContent = emoji;
+            document.getElementById('result-diagnosis').textContent = data.diseaseName;
+            document.getElementById('result-plant-type').textContent = `Plant Type: ${data.plantType}`;
+            document.getElementById('result-confidence').textContent = `${confidence}%`;
+            document.getElementById('result-treatment').textContent = data.treatmentPlan;
+           
+            statusMessage.innerHTML = `Diagnosis complete! Result: <strong>${data.diseaseName}</strong>`;
+            statusMessage.className = `text-gray-300 text-base mb-6 p-4 rounded ${isHealthy ? 'bg-green-900 border-l-4 border-green-700' : 'bg-red-900 border-l-4 border-red-700'}`;
             resultSection.classList.remove('hidden');
-            const card=document.querySelector('#result-section .grid > div:nth-child(1)');
-            const hdr=document.querySelector('#result-section h2');
-            if(healthy){card.classList.replace('bg-red-50','bg-green-50');card.classList.replace('border-red-200','border-green-200');hdr.classList.replace('text-red-600','text-green-600');}
-            else{card.classList.replace('bg-green-50','bg-red-50');card.classList.replace('border-green-200','border-red-200');hdr.classList.replace('text-green-600','text-red-600');}
-            document.querySelector('#result-section h2').innerHTML=`<span id="diagnosis-emoji">${emoji}</span> ${t.resultHeader}`;
-            document.querySelector('#result-section .grid > div:first-child h3').textContent=t.identifiedIssue;
-            document.querySelector('#result-section .grid > div:last-child h3').textContent=t.confidence;
-            document.querySelector('#result-section h3.text-2xl').textContent=t.treatmentHeader;
+            const diagnosisCard = document.querySelector('#result-section .grid > div:nth-child(1)');
+            const header = document.querySelector('#result-section h2');
+            if (isHealthy) {
+                diagnosisCard.classList.replace('bg-red-900', 'bg-green-900');
+                diagnosisCard.classList.replace('border-red-700', 'border-green-700');
+                header.classList.replace('text-red-300', 'text-green-300');
+            } else {
+                diagnosisCard.classList.replace('bg-green-900', 'bg-red-900');
+                diagnosisCard.classList.replace('border-green-700', 'border-red-700');
+                header.classList.replace('text-green-300', 'text-red-300');
+            }
         }
-
         // Drag & Drop
-        uploadBox.addEventListener('dragover',e=>{e.preventDefault();uploadBox.classList.add('focus-ring');});
-        uploadBox.addEventListener('dragleave',()=>uploadBox.classList.remove('focus-ring'));
-        uploadBox.addEventListener('drop',e=>{e.preventDefault();uploadBox.classList.remove('focus-ring');
-            if(e.dataTransfer.files.length){uploadInput.files=e.dataTransfer.files;uploadInput.dispatchEvent(new Event('change'));}});
-
-        // Init language
-        setLanguage(currentLang);
-        console.log("Plant Doctor AI ready (persistent login enabled).");
+        uploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadBox.classList.add('focus-ring');
+        });
+        uploadBox.addEventListener('dragleave', () => {
+            uploadBox.classList.remove('focus-ring');
+        });
+        uploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadBox.classList.remove('focus-ring');
+            if (e.dataTransfer.files.length) {
+                uploadInput.files = e.dataTransfer.files;
+                uploadInput.dispatchEvent(new Event('change'));
+            }
+        });
+        console.log("Plant Doctor AI Loaded! Upload a leaf image to begin (AI needs internet).");
     </script>
 </body>
 </html>
