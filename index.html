@@ -63,7 +63,7 @@
         <div id="login-form-container">
             <header class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-green-800 mb-2">
-                    Plant Doctor AI 🌿
+                    Plant Doctor AI
                 </h1>
                 <p class="text-lg text-gray-500">
                     Please login to access the plant health checker.
@@ -90,7 +90,7 @@
         <div id="signup-form-container" class="hidden">
             <header class="text-center mb-8">
                 <h1 class="text-4xl font-bold text-green-800 mb-2">
-                    Plant Doctor AI 🌿
+                    Plant Doctor AI
                 </h1>
                 <p class="text-lg text-gray-500">
                     Create an account to access the plant health checker.
@@ -119,11 +119,16 @@
     <div id="main-section" class="hidden w-full max-w-4xl bg-white rounded-xl card p-6 md:p-10">
         <header class="text-center mb-8 flex justify-between items-center">
             <h1 class="text-4xl font-bold text-green-800 mb-2">
-                Plant Doctor AI 🌿
+                Plant Doctor AI
             </h1>
-            <button id="logout-button" class="bg-red-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-700 transition duration-200 focus:outline-none focus-ring">
-                Logout
-            </button>
+            <div class="flex gap-2">
+                <button id="lang-toggle" class="bg-indigo-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-indigo-700 transition duration-200 focus:outline-none focus-ring">
+                    ಕನ್ನಡ
+                </button>
+                <button id="logout-button" class="bg-red-600 text-white py-2 px-4 rounded-lg font-bold hover:bg-red-700 transition duration-200 focus:outline-none focus-ring">
+                    Logout
+                </button>
+            </div>
         </header>
         <p class="text-lg text-gray-500 text-center mb-8">
             Upload a leaf image to get an instant diagnosis and treatment plan.
@@ -162,7 +167,7 @@
         </div>
         <div id="result-section" class="hidden mt-8">
             <h2 class="text-3xl font-bold text-red-600 mb-6 border-b pb-2">
-                <span id="diagnosis-emoji">🦠</span> Diagnosis Result
+                <span id="diagnosis-emoji">Warning</span> Diagnosis Result
             </h2>
             <div class="grid md:grid-cols-2 gap-6">
                 <div class="bg-red-50 p-6 rounded-xl border border-red-200">
@@ -197,6 +202,124 @@
     </div>
 
     <script>
+        /* ----------  LANGUAGE DICTIONARY ---------- */
+        const translations = {
+            en: {
+                title: "Plant Doctor AI",
+                subtitle: "Upload a leaf image to get an instant diagnosis and treatment plan.",
+                uploadBox: "Click or Drag & Drop your Plant Leaf Image",
+                uploadHint: "JPEG, PNG, or GIF up to 5MB",
+                cameraBtn: "Take Photo from Camera",
+                diagnoseBtn: "Start AI Diagnosis (Needs Internet)",
+                resetBtn: "Reset",
+                diagnosisStatus: "Diagnosis Status",
+                uploadedImage: "Uploaded Image:",
+                readyMsg: "Image uploaded successfully. Ready for AI diagnosis (connect to internet to proceed).",
+                analyzingMsg: "Sending image to AI for deep analysis... This may take a moment.",
+                noInternet: "No internet connection detected. Diagnosis requires online access to AI.",
+                resultHeader: "Diagnosis Result",
+                identifiedIssue: "Identified Issue:",
+                confidence: "AI Confidence:",
+                treatmentHeader: "Recommended Treatment Plan",
+                loginHeader: "Plant Doctor AI",
+                loginSub: "Please login to access the plant health checker.",
+                username: "Username",
+                password: "Password",
+                loginBtn: "Login",
+                noAccount: "Don't have an account? <a href='#' id='switch-to-signup' class='text-green-600 hover:underline'>Sign up</a>",
+                signupHeader: "Plant Doctor AI",
+                signupSub: "Create an account to access the plant health checker.",
+                signupBtn: "Sign Up",
+                haveAccount: "Already have an account? <a href='#' id='switch-to-login' class='text-green-600 hover:underline'>Login</a>",
+                logoutBtn: "Logout"
+            },
+            kn: {
+                title: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",
+                subtitle: "ಒಂದು ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ತಕ್ಷಣ ರೋಗನಿರ್ಣಯ ಮತ್ತು ಚಿಕಿತ್ಸಾ ಯೋಜನೆ ಪಡೆಯಿರಿ.",
+                uploadBox: "ನಿಮ್ಮ ಸಸ್ಯದ ಎಲೆಯ ಚಿತ್ರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ & ಡ್ರಾಪ್ ಮಾಡಿ",
+                uploadHint: "JPEG, PNG, ಅಥವಾ GIF 5MB ವರೆಗೆ",
+                cameraBtn: "ಕ್ಯಾಮೆರಾದಿಂದ ಫೋಟೋ ತೆಗೆದುಕೊಳ್ಳಿ",
+                diagnoseBtn: "AI ರೋಗನಿರ್ಣಯ ಪ್ರಾರಂಭಿಸಿ (ಇಂಟರ್ನೆಟ್ ಅಗತ್ಯ)",
+                resetBtn: "ಮರುಹೊಂದಿಸಿ",
+                diagnosisStatus: "ರೋಗನಿರ್ಣಯ ಸ್ಥಿತಿ",
+                uploadedImage: "ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ಚಿತ್ರ:",
+                readyMsg: "ಚಿತ್ರ ಯಶಸ್ವಿಯಾಗಿ ಅಪ್‌ಲೋಡ್ ಆಯಿತು. AI ರೋಗನಿರ್ಣಯಕ್ಕೆ ಸಿದ್ಧ (ಇಂಟರ್ನೆಟ್‌ಗೆ ಸಂಪರ್ಕಿಸಿ).",
+                analyzingMsg: "ಚಿತ್ರವನ್ನು AI ಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ... ಸ್ವಲ್ಪ ಸಮಯ ತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+                noInternet: "ಇಂಟರ್ನೆಟ್ ಸಂಪರ್ಕ ಕಂಡುಬಂದಿಲ್ಲ. ರೋಗನಿರ್ಣಯಕ್ಕೆ ಆನ್‌ಲೈನ್ ಪ್ರವೇಶ ಅಗತ್ಯ.",
+                resultHeader: "ರೋಗನಿರ್ಣಯ ಫಲಿತಾಂಶ",
+                identifiedIssue: "ಗುರುತಿಸಲಾದ ಸಮಸ್ಯೆ:",
+                confidence: "AI ವಿಶ್ವಾಸ:",
+                treatmentHeader: "ಶಿಫಾರಸು ಮಾಡಲಾದ ಚಿಕಿತ್ಸಾ ಯೋಜನೆ",
+                loginHeader: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",
+                loginSub: "ಪ್ಲಾಂಟ್ ಹೆಲ್ತ್ ಚೆಕರ್ ಬಳಸಲು ದಯವಿಟ್ಟು ಲಾಗಿನ್ ಮಾಡಿ.",
+                username: "ಬಳಕೆದಾರ ಹೆಸರು",
+                password: "ಗುಪ್ತಪದ",
+                loginBtn: "ಲಾಗಿನ್",
+                noAccount: "ಖಾತೆ ಇಲ್ಲವೇ? <a href='#' id='switch-to-signup' class='text-green-600 hover:underline'>ಸೈನ್ ಅಪ್</a>",
+                signupHeader: "ಪ್ಲಾಂಟ್ ಡಾಕ್ಟರ್ AI",
+                signupSub: "ಪ್ಲಾಂಟ್ ಹೆಲ್ತ್ ಚೆಕರ್ ಬಳಸಲು ಖಾತೆ ರಚಿಸಿ.",
+                signupBtn: "ಸೈನ್ ಅಪ್",
+                haveAccount: "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? <a href='#' id='switch-to-login' class='text-green-600 hover:underline'>ಲಾಗಿನ್</a>",
+                logoutBtn: "ಲಾಗೌಟ್"
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'en';
+
+        /* ----------  LANGUAGE SWITCHING ---------- */
+        function setLanguage(lang) {
+            if (lang === currentLang) return;
+            currentLang = lang;
+            const t = translations[lang];
+            localStorage.setItem('lang', lang);
+
+            // Header
+            document.querySelector('#main-section h1').textContent = t.title;
+            document.querySelector('#main-section p.text-lg').textContent = t.subtitle;
+            document.getElementById('logout-button').textContent = t.logoutBtn;
+            document.getElementById('lang-toggle').textContent = (lang === 'en' ? 'ಕನ್ನಡ' : 'English');
+
+            // Upload section
+            document.querySelector('#upload-box p.font-semibold').textContent = t.uploadBox;
+            document.querySelector('#upload-box p.text-sm').textContent = t.uploadHint;
+            document.getElementById('use-camera').textContent = t.cameraBtn;
+
+            // Preview section
+            document.querySelector('#preview-section h2').textContent = t.diagnosisStatus;
+            document.querySelector('#preview-section p.text-gray-500').textContent = t.uploadedImage;
+            document.getElementById('diagnose-button').textContent = t.diagnoseBtn;
+            document.getElementById('reset-button').textContent = t.resetBtn;
+
+            // Result section
+            document.querySelector('#result-section h2').innerHTML = `<span id="diagnosis-emoji">Warning</span> ${t.resultHeader}`;
+            document.querySelector('#result-section .bg-red-50 h3').textContent = t.identifiedIssue;
+            document.querySelector('#result-section .bg-green-50 h3').textContent = t.confidence;
+            document.querySelector('#result-section h3.text-2xl').textContent = t.treatmentHeader;
+
+            // Auth screens
+            document.querySelectorAll('#auth-section h1').forEach(h => h.textContent = t.loginHeader);
+            document.querySelector('#login-form-container p.text-lg').textContent = t.loginSub;
+            document.querySelector('#signup-form-container p.text-lg').textContent = t.signupSub;
+            document.querySelector('#login-form label[for="login-username"]').textContent = t.username;
+            document.querySelector('#login-form label[for="login-password"]').textContent = t.password;
+            document.querySelector('#login-form button[type="submit"]').textContent = t.loginBtn;
+            document.querySelector('#login-form-container p.mt-4').innerHTML = t.noAccount;
+            document.querySelector('#signup-form label[for="signup-username"]').textContent = t.username;
+            document.querySelector('#signup-form label[for="signup-password"]').textContent = t.password;
+            document.querySelector('#signup-form button[type="submit"]').textContent = t.signupBtn;
+            document.querySelector('#signup-form-container p.mt-4').innerHTML = t.haveAccount;
+
+            // Dynamic messages
+            const msg = document.getElementById('status-message');
+            if (msg && msg.textContent.includes('Please upload')) {
+                msg.innerHTML = t.readyMsg;
+            }
+        }
+
+        document.getElementById('lang-toggle').addEventListener('click', () => {
+            setLanguage(currentLang === 'en' ? 'kn' : 'en');
+        });
+
         // User storage (using localStorage for demo; not secure for real apps)
         function getUsers() {
             return JSON.parse(localStorage.getItem('users')) || [];
@@ -216,12 +339,14 @@
             e.preventDefault();
             loginFormContainer.classList.add('hidden');
             signupFormContainer.classList.remove('hidden');
+            setLanguage(currentLang); // Refresh auth texts
         });
 
         switchToLogin.addEventListener('click', (e) => {
             e.preventDefault();
             signupFormContainer.classList.add('hidden');
             loginFormContainer.classList.remove('hidden');
+            setLanguage(currentLang);
         });
 
         // Signup handling
@@ -235,7 +360,7 @@
             const password = document.getElementById('signup-password').value.trim();
 
             if (!username || !password) {
-                signupError.textContent = 'Please enter both username and password.';
+                signupError.textContent = currentLang === 'en' ? 'Please enter both username and password.' : 'ದಯವಿಟ್ಟು ಬಳಕೆದಾರ ಹೆಸರು ಮತ್ತು ಗುಪ್ತಪದವನ್ನು ನಮೂದಿಸಿ.';
                 signupError.classList.remove('hidden');
                 signupSuccess.classList.add('hidden');
                 return;
@@ -243,7 +368,7 @@
 
             let users = getUsers();
             if (users.some(user => user.username === username)) {
-                signupError.textContent = 'Username already exists.';
+                signupError.textContent = currentLang === 'en' ? 'Username already exists.' : 'ಬಳಕೆದಾರ ಹೆಸರು ಈಗಾಗಲೇ ಇದೆ.';
                 signupError.classList.remove('hidden');
                 signupSuccess.classList.add('hidden');
                 return;
@@ -284,6 +409,7 @@
             if (user) {
                 authSection.classList.add('hidden');
                 mainSection.classList.remove('hidden');
+                setLanguage(currentLang); // Apply language to main UI
             } else {
                 loginError.classList.remove('hidden');
             }
@@ -300,6 +426,7 @@
             document.getElementById('login-password').value = '';
             loginError.classList.add('hidden');
             resetApp();
+            setLanguage(currentLang);
         });
 
         // Camera handling
@@ -345,7 +472,7 @@
             }
         });
 
-        // SAME JAVASCRIPT AS BEFORE (API still needs internet)
+        // API and core logic
         const apiKey = "AIzaSyDgcYJ9YCcEmkIpwhpanXKIwO3ymVNYa4g";
         const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
        
@@ -357,7 +484,7 @@
         const diagnoseButton = document.getElementById('diagnose-button');
         const imagePreview = document.getElementById('image-preview');
         const statusMessage = document.getElementById('status-message');
-        // [Rest of the JS functions unchanged: fileToBase64, triggerFileUpload, handleFileChange, resetApp, setLoading, startDiagnosis, displayResults, Drag & Drop]
+
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -366,14 +493,16 @@
                 reader.readAsDataURL(file);
             });
         }
+
         function triggerFileUpload() {
             uploadInput.click();
         }
+
         function handleFileChange(event) {
             const file = event.target.files[0];
             if (!file) return;
             if (file.size > 5 * 1024 * 1024) {
-                statusMessage.innerHTML = 'File too large. Max size is 5MB. Please choose a smaller image.';
+                statusMessage.innerHTML = currentLang === 'en' ? 'File too large. Max size is 5MB. Please choose a smaller image.' : 'ಫೈಲ್ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ. ಗರಿಷ್ಠ ಗಾತ್ರ 5MB. ದಯವಿಟ್ಟು ಸಣ್ಣ ಚಿತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ.';
                 statusMessage.classList.remove('bg-blue-50');
                 statusMessage.classList.add('bg-red-50', 'border-red-400');
                 uploadInput.value = '';
@@ -387,18 +516,19 @@
                 previewSection.classList.remove('hidden');
                 resultSection.classList.add('hidden');
                
-                statusMessage.innerHTML = 'Image uploaded successfully. Ready for AI diagnosis (connect to internet to proceed).';
+                statusMessage.innerHTML = translations[currentLang].readyMsg;
                 statusMessage.classList.remove('bg-yellow-50', 'border-yellow-400', 'bg-red-50', 'border-red-400');
                 statusMessage.classList.add('bg-blue-50', 'border-blue-400');
                 diagnoseButton.disabled = false;
-                diagnoseButton.innerHTML = 'Start AI Diagnosis (Needs Internet)';
+                diagnoseButton.innerHTML = translations[currentLang].diagnoseBtn;
             }).catch(error => {
                 console.error("File processing error:", error);
-                statusMessage.innerHTML = 'Could not process file. Check console for details.';
+                statusMessage.innerHTML = currentLang === 'en' ? 'Could not process file. Check console for details.' : 'ಫೈಲ್ ಪ್ರಕ್ರಿಯೆಗೊಳ್ಳಲಾಗಲಿಲ್ಲ. ವಿವರಗಳಿಗಾಗಿ ಕನ್ಸೋಲ್ ಪರಿಶೀಲಿಸಿ.';
                 statusMessage.classList.remove('bg-blue-50');
                 statusMessage.classList.add('bg-red-50', 'border-red-400');
             });
         }
+
         function resetApp() {
             uploadedFileBase64 = null;
             uploadInput.value = '';
@@ -408,34 +538,35 @@
             previewSection.classList.add('hidden');
             resultSection.classList.add('hidden');
            
-            statusMessage.innerHTML = 'Please upload an image to start the analysis.';
+            statusMessage.innerHTML = translations[currentLang].readyMsg;
             statusMessage.classList.remove('bg-blue-50', 'border-blue-400', 'bg-red-50', 'border-red-400', 'bg-green-50', 'border-green-400');
             statusMessage.classList.add('bg-yellow-50', 'border-yellow-400');
-            document.getElementById('diagnosis-emoji').textContent = '🦠';
+            document.getElementById('diagnosis-emoji').textContent = 'Warning';
         }
+
         function setLoading(isLoading) {
             diagnoseButton.disabled = isLoading;
             if (isLoading) {
                 diagnoseButton.innerHTML = `
                     <div class="loader"></div>
-                    Analyzing...
+                    ${currentLang === 'en' ? 'Analyzing...' : 'ವಿಶ್ಲೇಷಿಸಲಾಗುತ್ತಿದೆ...'}
                 `;
-                statusMessage.innerHTML = 'Sending image to AI for deep analysis... This may take a moment.';
+                statusMessage.innerHTML = translations[currentLang].analyzingMsg;
                 statusMessage.classList.remove('bg-blue-50', 'border-blue-400');
                 statusMessage.classList.add('bg-yellow-50', 'border-yellow-400');
             } else {
-                diagnoseButton.innerHTML = 'Start AI Diagnosis (Needs Internet)';
+                diagnoseButton.innerHTML = translations[currentLang].diagnoseBtn;
             }
         }
+
         async function startDiagnosis() {
             if (!uploadedFileBase64) return;
            
             setLoading(true);
            
-            // Offline warning if no connection (simple check)
             if (!navigator.onLine) {
                 setLoading(false);
-                statusMessage.innerHTML = 'No internet connection detected. Diagnosis requires online access to AI.';
+                statusMessage.innerHTML = translations[currentLang].noInternet;
                 statusMessage.classList.add('bg-red-50', 'border-red-400');
                 return;
             }
@@ -503,7 +634,7 @@
                 } catch (error) {
                     console.error("API Error:", error);
                     if (attempt === maxRetries - 1) {
-                        statusMessage.innerHTML = `Diagnosis failed. Error: ${error.message}. Try again later or check connection.`;
+                        statusMessage.innerHTML = `${currentLang === 'en' ? 'Diagnosis failed. Error:' : 'ರೋಗನಿರ್ಣಯ ವಿಫಲವಾಯಿತು. ದೋಷ:'} ${error.message}. ${currentLang === 'en' ? 'Try again later or check connection.' : 'ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಸಂಪರ್ಕ ಪರಿಶೀಲಿಸಿ.'}`;
                         statusMessage.classList.remove('bg-yellow-50', 'border-yellow-400');
                         statusMessage.classList.add('bg-red-50', 'border-red-400');
                     }
@@ -511,20 +642,24 @@
             }
             setLoading(false);
         }
+
         function displayResults(data) {
             if (!data) return;
             const isHealthy = data.diseaseName.toLowerCase() === 'healthy';
             const confidence = (data.confidenceScore * 100).toFixed(1);
-            const emoji = isHealthy ? '🌱' : '⚠️';
+            const emoji = isHealthy ? 'Healthy' : 'Warning';
+            const t = translations[currentLang];
+
             document.getElementById('diagnosis-emoji').textContent = emoji;
             document.getElementById('result-diagnosis').textContent = data.diseaseName;
-            document.getElementById('result-plant-type').textContent = `Plant Type: ${data.plantType}`;
+            document.getElementById('result-plant-type').textContent = `${currentLang === 'en' ? 'Plant Type:' : 'ಸಸ್ಯದ ಪ್ರಕಾರ:'} ${data.plantType}`;
             document.getElementById('result-confidence').textContent = `${confidence}%`;
             document.getElementById('result-treatment').textContent = data.treatmentPlan;
            
-            statusMessage.innerHTML = `Diagnosis complete! Result: <strong>${data.diseaseName}</strong>`;
+            statusMessage.innerHTML = `${currentLang === 'en' ? 'Diagnosis complete! Result:' : 'ರೋಗನಿರ್ಣಯ ಪೂರ್ಣಗೊಂಡಿದೆ! ಫಲಿತಾಂಶ:'} <strong>${data.diseaseName}</strong>`;
             statusMessage.className = `text-gray-700 text-base mb-4 p-3 rounded ${isHealthy ? 'bg-green-50 border-l-4 border-green-400' : 'bg-red-50 border-l-4 border-red-400'}`;
             resultSection.classList.remove('hidden');
+
             const diagnosisCard = document.querySelector('#result-section .grid > div:nth-child(1)');
             const header = document.querySelector('#result-section h2');
             if (isHealthy) {
@@ -536,7 +671,14 @@
                 diagnosisCard.classList.replace('border-green-200', 'border-red-200');
                 header.classList.replace('text-green-600', 'text-red-600');
             }
+
+            // Reapply language to result section
+            document.querySelector('#result-section h2').innerHTML = `<span id="diagnosis-emoji">${emoji}</span> ${t.resultHeader}`;
+            document.querySelector('#result-section .grid > div:first-child h3').textContent = t.identifiedIssue;
+            document.querySelector('#result-section .grid > div:last-child h3').textContent = t.confidence;
+            document.querySelector('#result-section h3.text-2xl').textContent = t.treatmentHeader;
         }
+
         // Drag & Drop
         uploadBox.addEventListener('dragover', (e) => {
             e.preventDefault();
@@ -553,6 +695,9 @@
                 uploadInput.dispatchEvent(new Event('change'));
             }
         });
+
+        // Initialize language on load
+        setLanguage(currentLang);
         console.log("Plant Doctor AI Loaded! Upload a leaf image to begin (AI needs internet).");
     </script>
 </body>
