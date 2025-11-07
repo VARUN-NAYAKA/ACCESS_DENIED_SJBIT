@@ -158,7 +158,14 @@
                     <svg class="w-7 h-7 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.204A9.954 9.954 0 0012 3c-4.419 0-8.24 1.803-10.618 4.796m14.236 0c.2.469.366.97.485 1.504M20 10.5c0 .324.015.645.044.966M12 21c-2.41 0-4.63-.642-6.556-1.754M17.152 14.848l-1.424-1.424m-1.424-1.424l-1.424-1.424"></path></svg>
                     Recommended Treatment Plan
                 </h3>
-                <p id="result-treatment" class="text-gray-700 whitespace-pre-wrap leading-relaxed"></p>
+                <div class="flex items-start space-x-3">
+                    <p id="result-treatment" class="text-gray-700 whitespace-pre-wrap leading-relaxed flex-1"></p>
+                    <button id="speak-button" class="mt-1 p-2 rounded-full bg-green-100 hover:bg-green-200 text-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition opacity-0" aria-label="Speak result">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586m4.707-4.707L12 3l1.707 1.707m-4.414 0L12 8.414l1.707-1.707m-7 7h.01" />
+                        </svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -188,44 +195,209 @@ const translations = {
 let currentLang = localStorage.getItem('lang') || 'en';
 const LOGGED_USER_KEY = 'leafLogicLoggedUser';
 
+/* ---------- SPEECH SYNTHESIS ---------- */
+let speechVoices = [];
+let isSpeaking = false;
+
+function loadVoices() {
+    speechVoices = speechSynthesis.getVoices();
+    if (speechVoices.length === 0) {
+        setTimeout(loadVoices, 100);
+    }
+}
+
+function getVoiceForLang(lang) {
+    const targetLang = lang === 'kn' ? 'kn-IN' : 'en-US';
+    return speechVoices.find(v => v.lang.startsWith(targetLang)) ||
+           speechVoices.find(v => v.lang.includes(lang === 'kn' ? 'kn' : 'en')) ||
+           speechVoices.find(v => v.default);
+}
+
+function speakText(text, lang) {
+    if (isSpeaking) speechSynthesis.cancel();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    const voice = getVoiceForLang(lang);
+    
+    if (voice) utterance.voice = voice;
+    utterance.lang = lang === 'kn' ? 'kn-IN' : 'en-US';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+
+    utterance.onstart = () => {
+        isSpeaking = true;
+        document.getElementById('speak-button').innerHTML = `
+            <svg class="w-6 h-6 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586m4.707-4.707L12 3l1.707 1.707m-4.414 0L12 8.414l1.707-1.707m-7 7h.01M19 12h.01" />
+            </svg>`;
+    };
+
+    utterance.onend = () => {
+        isSpeaking = false;
+        document.getElementById('speak-button').innerHTML = `
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586m4.707-4.707L12 3l1.707 1.707m-4.414 0L12 8.414l1.707-1.707m-7 7h.01" />
+            </svg>`;
+    };
+
+    speechSynthesis.speak(utterance);
+}
+
 /* ---------- AUTH ---------- */
 function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
 function saveUsers(u){localStorage.setItem('users',JSON.stringify(u));}
-function setLoggedIn(u){localStorage.setItem(LOGGED_USER_KEY,u);document.getElementById('auth-section').classList.add('hidden');document.getElementById('main-section').classList.remove('hidden');setLanguage(currentLang);}
-function logout(){localStorage.removeItem(LOGGED_USER_KEY);document.getElementById('main-section').classList.add('hidden');document.getElementById('auth-section').classList.remove('hidden');document.getElementById('login-form-container').classList.remove('hidden');document.getElementById('signup-form-container').classList.add('hidden');resetApp();}
-window.addEventListener('load',()=>{const u=localStorage.getItem(LOGGED_USER_KEY);if(u&&getUsers().some(x=>x.username===u))setLoggedIn(u);setLanguage(currentLang);});
+function setLoggedIn(u){
+    localStorage.setItem(LOGGED_USER_KEY,u);
+    document.getElementById('auth-section').classList.add('hidden');
+    document.getElementById('main-section').classList.remove('hidden');
+    setLanguage(currentLang);
+}
+function logout(){
+    localStorage.removeItem(LOGGED_USER_KEY);
+    document.getElementById('main-section').classList.add('hidden');
+    document.getElementById('auth-section').classList.remove('hidden');
+    document.getElementById('login-form-container').classList.remove('hidden');
+    document.getElementById('signup-form-container').classList.add('hidden');
+    resetApp();
+}
+window.addEventListener('load',()=>{
+    const u=localStorage.getItem(LOGGED_USER_KEY);
+    if(u && getUsers().some(x=>x.username===u)) setLoggedIn(u);
+    setLanguage(currentLang);
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+});
 document.getElementById('switch-to-signup').onclick=e=>{e.preventDefault();toggleAuth('signup');};
 document.getElementById('switch-to-login').onclick=e=>{e.preventDefault();toggleAuth('login');};
-function toggleAuth(m){const l=document.getElementById('login-form-container'),s=document.getElementById('signup-form-container');m==='signup'?(l.classList.add('hidden'),s.classList.remove('hidden')):(s.classList.add('hidden'),l.classList.remove('hidden'));}
-document.getElementById('signup-form').onsubmit=e=>{e.preventDefault();const u=document.getElementById('signup-username').value.trim(),p=document.getElementById('signup-password').value.trim();if(!u||!p)return showError('signup-error','Fill all fields');const us=getUsers();if(us.some(x=>x.username===u))return showError('signup-error','Username exists');us.push({username:u,password:p});saveUsers(us);document.getElementById('signup-success').classList.remove('hidden');setTimeout(()=>toggleAuth('login'),1500);};
-document.getElementById('login-form').onsubmit=e=>{e.preventDefault();const u=document.getElementById('login-username').value.trim(),p=document.getElementById('login-password').value.trim();const user=getUsers().find(x=>x.username===u&&x.password===p);user?setLoggedIn(u):showError('login-error','Invalid credentials');};
-function showError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),4000);}
+function toggleAuth(m){
+    const l=document.getElementById('login-form-container'),s=document.getElementById('signup-form-container');
+    m==='signup'?(l.classList.add('hidden'),s.classList.remove('hidden')):(s.classList.add('hidden'),l.classList.remove('hidden'));
+}
+document.getElementById('signup-form').onsubmit=e=>{
+    e.preventDefault();
+    const u=document.getElementById('signup-username').value.trim(),p=document.getElementById('signup-password').value.trim();
+    if(!u||!p) return showError('signup-error','Fill all fields');
+    const us=getUsers();
+    if(us.some(x=>x.username===u)) return showError('signup-error','Username exists');
+    us.push({username:u,password:p});
+    saveUsers(us);
+    document.getElementById('signup-success').classList.remove('hidden');
+    setTimeout(()=>toggleAuth('login'),1500);
+};
+document.getElementById('login-form').onsubmit=e=>{
+    e.preventDefault();
+    const u=document.getElementById('login-username').value.trim(),p=document.getElementById('login-password').value.trim();
+    const user=getUsers().find(x=>x.username===u&&x.password===p);
+    user?setLoggedIn(u):showError('login-error','Invalid credentials');
+};
+function showError(id,msg){
+    const el=document.getElementById(id);
+    el.textContent=msg;
+    el.classList.remove('hidden');
+    setTimeout(()=>el.classList.add('hidden'),4000);
+}
 document.getElementById('logout-button').onclick=logout;
 
 /* ---------- CAMERA & UI ---------- */
 const useCamera=document.getElementById('use-camera'),cameraModal=document.getElementById('camera-modal'),video=document.getElementById('video'),captureBtn=document.getElementById('capture-button'),closeCam=document.getElementById('close-camera');
 const uploadInput=document.getElementById('file-upload'),uploadBox=document.getElementById('upload-box'),previewSection=document.getElementById('preview-section'),resultSection=document.getElementById('result-section'),diagnoseButton=document.getElementById('diagnose-button'),imagePreview=document.getElementById('image-preview'),statusMessage=document.getElementById('status-message');
 
-useCamera.onclick=()=>{cameraModal.classList.remove('hidden');navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(s=>video.srcObject=s).catch(()=>{alert('Camera denied');cameraModal.classList.add('hidden');});};
-captureBtn.onclick=()=>{const c=document.createElement('canvas');c.width=video.videoWidth;c.height=video.videoHeight;c.getContext('2d').drawImage(video,0,0);c.toBlob(b=>{const f=new File([b],'photo.jpg',{type:'image/jpeg'});const dt=new DataTransfer();dt.items.add(f);uploadInput.files=dt.files;handleFileChange({target:{files:uploadInput.files}});cameraModal.classList.add('hidden');video.srcObject.getTracks().forEach(t=>t.stop());},'image/jpeg');};
-closeCam.onclick=()=>{cameraModal.classList.add('hidden');if(video.srcObject)video.srcObject.getTracks().forEach(t=>t.stop());};
+useCamera.onclick=()=>{
+    cameraModal.classList.remove('hidden');
+    navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}).then(s=>video.srcObject=s).catch(()=>{
+        alert('Camera denied');
+        cameraModal.classList.add('hidden');
+    });
+};
+captureBtn.onclick=()=>{
+    const c=document.createElement('canvas');
+    c.width=video.videoWidth;c.height=video.videoHeight;
+    c.getContext('2d').drawImage(video,0,0);
+    c.toBlob(b=>{
+        const f=new File([b],'photo.jpg',{type:'image/jpeg'});
+        const dt=new DataTransfer();dt.items.add(f);
+        uploadInput.files=dt.files;
+        handleFileChange({target:{files:uploadInput.files}});
+        cameraModal.classList.add('hidden');
+        video.srcObject.getTracks().forEach(t=>t.stop());
+    },'image/jpeg');
+};
+closeCam.onclick=()=>{
+    cameraModal.classList.add('hidden');
+    if(video.srcObject) video.srcObject.getTracks().forEach(t=>t.stop());
+};
 
 let uploadedFileBase64=null;
-function fileToBase64(f){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(f);});}
+function fileToBase64(f){
+    return new Promise((res,rej)=>{
+        const r=new FileReader();
+        r.onload=()=>res(r.result.split(',')[1]);
+        r.onerror=rej;
+        r.readAsDataURL(f);
+    });
+}
 function triggerFileUpload(){uploadInput.click();}
-function handleFileChange(e){const file=e.target.files[0];if(!file)return;if(file.size>4*1024*1024){statusMessage.innerHTML='File too large (max 4 MB).';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}fileToBase64(file).then(b=>{uploadedFileBase64=b;imagePreview.src=URL.createObjectURL(file);document.getElementById('upload-section').classList.add('hidden');previewSection.classList.remove('hidden');statusMessage.innerHTML=translations[currentLang].readyMsg;statusMessage.className='p-4 bg-green-50 border-l-4 border-solid border-green-400';diagnoseButton.disabled=false;}).catch(()=>{statusMessage.innerHTML='Failed to read file.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';});}
-function resetApp(){uploadedFileBase64=null;uploadInput.value='';diagnoseButton.disabled=true;document.getElementById('upload-section').classList.remove('hidden');previewSection.classList.add('hidden');resultSection.classList.add('hidden');statusMessage.innerHTML='Upload an image to begin.';statusMessage.className='p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400';}
-function setLoading(l){diagnoseButton.disabled=l;diagnoseButton.innerHTML=l?`<div class="loader"></div> ${translations[currentLang].analyzingMsg}`:translations[currentLang].diagnoseBtn;statusMessage.innerHTML=l?translations[currentLang].analyzingMsg:translations[currentLang].readyMsg;statusMessage.className=l?'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400':'p-4 bg-green-50 border-l-4 border-solid border-green-400';}
+function handleFileChange(e){
+    const file=e.target.files[0];
+    if(!file) return;
+    if(file.size>4*1024*1024){
+        statusMessage.innerHTML='File too large (max 4 MB).';
+        statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';
+        return;
+    }
+    fileToBase64(file).then(b=>{
+        uploadedFileBase64=b;
+        imagePreview.src=URL.createObjectURL(file);
+        document.getElementById('upload-section').classList.add('hidden');
+        previewSection.classList.remove('hidden');
+        statusMessage.innerHTML=translations[currentLang].readyMsg;
+        statusMessage.className='p-4 bg-green-50 border-l-4 border-solid border-green-400';
+        diagnoseButton.disabled=false;
+    }).catch(()=>{
+        statusMessage.innerHTML='Failed to read file.';
+        statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';
+    });
+}
+function resetApp(){
+    uploadedFileBase64=null;
+    uploadInput.value='';
+    diagnoseButton.disabled=true;
+    document.getElementById('upload-section').classList.remove('hidden');
+    previewSection.classList.add('hidden');
+    resultSection.classList.add('hidden');
+    statusMessage.innerHTML='Upload an image to begin.';
+    statusMessage.className='p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400';
+}
+function setLoading(l){
+    diagnoseButton.disabled=l;
+    diagnoseButton.innerHTML=l?`<div class="loader"></div> ${translations[currentLang].analyzingMsg}`:translations[currentLang].diagnoseBtn;
+    statusMessage.innerHTML=l?translations[currentLang].analyzingMsg:translations[currentLang].readyMsg;
+    statusMessage.className=l?'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400':'p-4 bg-green-50 border-l-4 border-solid border-green-400';
+}
 
 /* ---------- GEMINI CALL ---------- */
 async function startDiagnosis(){
-    if(!uploadedFileBase64)return;
-    if(uploadedFileBase64.length<100){statusMessage.innerHTML='Invalid image.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
+    if(!uploadedFileBase64) return;
+    if(uploadedFileBase64.length<100){
+        statusMessage.innerHTML='Invalid image.';
+        statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';
+        return;
+    }
     const mimeType=uploadInput.files[0]?.type||"image/jpeg";
-    if(!mimeType.startsWith('image/')){statusMessage.innerHTML='Invalid image type.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
+    if(!mimeType.startsWith('image/')){
+        statusMessage.innerHTML='Invalid image type.';
+        statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';
+        return;
+    }
 
     setLoading(true);
-    if(!navigator.onLine){setLoading(false);statusMessage.innerHTML=translations[currentLang].noInternet;statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
+    if(!navigator.onLine){
+        setLoading(false);
+        statusMessage.innerHTML=translations[currentLang].noInternet;
+        statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';
+        return;
+    }
 
     const systemPrompt=`You are a world-class plant pathologist. Analyze the leaf image and return ONLY a JSON object with:
 plantType (string), diseaseName (string or "Healthy"), confidenceScore (number 0-1), treatmentPlan (string with 3-5 steps).`;
@@ -293,18 +465,39 @@ function displayResults(d){
     document.getElementById('result-confidence').textContent = `${conf}%`;
     document.getElementById('result-treatment').textContent = d.treatmentPlan;
     resultSection.classList.remove('hidden');
+    
     const card = document.querySelector('#result-section .grid > div:first-child');
     card.className = healthy ? 'bg-green-50 p-8 rounded-xl border border-solid border-green-200' : 'bg-red-50 p-8 rounded-xl border border-solid border-red-200';
+
+    // Show and setup speaker button
+    const speakBtn = document.getElementById('speak-button');
+    speakBtn.classList.remove('opacity-0');
+    speakBtn.onclick = () => {
+        const text = `${d.diseaseName === 'Healthy' ? (currentLang === 'en' ? 'The plant is healthy.' : 'ಸಸ್ಯ ಆರೋಗ್ಯವಾಗಿದೆ.') : 
+            (currentLang === 'en' ? `Disease detected: ${d.diseaseName}.` : `ರೋಗ ಪತ್ತೆಯಾಗಿದೆ: ${d.diseaseName}.`)} 
+            ${currentLang === 'en' ? 'Plant type:' : 'ಸಸ್ಯದ ಪ್ರಕಾರ:'} ${d.plantType}. 
+            ${currentLang === 'en' ? 'Confidence:' : 'ವಿಶ್ವಾಸ:'} ${conf}%. 
+            ${currentLang === 'en' ? 'Treatment:' : 'ಚಿಕಿತ್ಸೆ:'} ${d.treatmentPlan}`;
+        speakText(text, currentLang);
+    };
 }
 
 /* ---------- DRAG & DROP ---------- */
 uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('focus-ring'); });
 uploadBox.addEventListener('dragleave', () => uploadBox.classList.remove('focus-ring'));
-uploadBox.addEventListener('drop', e => { e.preventDefault(); uploadBox.classList.remove('focus-ring'); if (e.dataTransfer.files.length) { uploadInput.files = e.dataTransfer.files; uploadInput.dispatchEvent(new Event('change')); } });
+uploadBox.addEventListener('drop', e => { 
+    e.preventDefault(); 
+    uploadBox.classList.remove('focus-ring'); 
+    if (e.dataTransfer.files.length) { 
+        uploadInput.files = e.dataTransfer.files; 
+        uploadInput.dispatchEvent(new Event('change')); 
+    } 
+});
 
 /* ---------- LANGUAGE ---------- */
 function setLanguage(lang){
-    currentLang = lang; localStorage.setItem('lang', lang);
+    currentLang = lang; 
+    localStorage.setItem('lang', lang);
     const t = translations[lang];
     document.querySelector('#main-section p.text-lg').textContent = t.subtitle;
     document.querySelector('#upload-box p.font-semibold').textContent = t.uploadBox;
