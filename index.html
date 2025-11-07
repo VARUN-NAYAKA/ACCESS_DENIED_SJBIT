@@ -22,16 +22,19 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.12);
         }
         #upload-box {
-            border: 3px dashed #94a3b8;
-            transition: all .2s;
+            border: 3px solid #86efac; /* Solid green line */
+            background: rgba(134, 239, 172, 0.15); /* Transparent greenish tint */
+            transition: all .3s ease;
             cursor: pointer;
+            border-radius: 1rem;
         }
         #upload-box:hover {
-            background: #f1f5f9;
-            border-color: #64748b;
+            background: rgba(74, 222, 128, 0.25);
+            border-color: #22c55e;
+            transform: scale(1.02);
         }
         .focus-ring {
-            box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.4);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
         }
         .loader {
             border: 4px solid #e2e8f0;
@@ -58,7 +61,7 @@
         }
         .header-title {
             font-weight: 800;
-            font-size: 1.75rem;
+            font-size: 1.8rem;
             letter-spacing: -0.5px;
             background: linear-gradient(90deg, #16a34a, #15803d);
             -webkit-background-clip: text;
@@ -68,6 +71,7 @@
         @media (max-width: 640px) {
             .header-title { font-size: 1.5rem; }
         }
+        .border-solid { border-style: solid !important; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -92,11 +96,11 @@
                 <form id="login-form" class="space-y-6">
                     <div>
                         <label for="login-username" class="block text-gray-700 font-medium mb-2">Username</label>
-                        <input type="text" id="login-username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
+                        <input type="text" id="login-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
                     </div>
                     <div>
                         <label for="login-password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <input type="password" id="login-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
+                        <input type="password" id="login-password" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
                     </div>
                     <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300">Login</button>
                 </form>
@@ -112,11 +116,11 @@
                 <form id="signup-form" class="space-y-6">
                     <div>
                         <label for="signup-username" class="block text-gray-700 font-medium mb-2">Username</label>
-                        <input type="text" id="signup-username" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
+                        <input type="text" id="signup-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
                     </div>
                     <div>
                         <label for="signup-password" class="block text-gray-700 font-medium mb-2">Password</label>
-                        <input type="password" id="signup-password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
+                        <input type="password" id="signup-password" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-gray-50" required>
                     </div>
                     <button type="submit" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-300">Sign Up</button>
                 </form>
@@ -135,9 +139,10 @@
 
             <p class="text-lg text-gray-600 text-center mb-10 max-w-2xl mx-auto">Upload a leaf image to get an instant diagnosis and treatment plan.</p>
 
+            <!-- Upload Section with Solid Green Border & Tint -->
             <div id="upload-section">
-                <div id="upload-box" onclick="triggerFileUpload()" class="flex flex-col items-center justify-center h-56 rounded-xl p-8 text-gray-600 hover:text-green-700 mb-6 border-3 border-dashed border-slate-300 bg-gray-50">
-                    <svg class="w-16 h-16 mb-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div id="upload-box" onclick="triggerFileUpload()" class="flex flex-col items-center justify-center h-56 rounded-xl p-8 text-gray-700 mb-6">
+                    <svg class="w-16 h-16 mb-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 014 4v2m-5-8l-2-2m0 0L7 8m2-2v4"></path>
                     </svg>
                     <p class="font-semibold text-xl">Click or Drag & Drop your Plant Leaf Image</p>
@@ -147,35 +152,39 @@
                 <input type="file" id="file-upload" accept="image/*" class="hidden" onchange="handleFileChange(event)">
             </div>
 
-            <div id="preview-section" class="hidden mt-10 p-6 border border-gray-200 rounded-xl bg-gray-50">
+            <!-- Preview Section -->
+            <div id="preview-section" class="hidden mt-10 p-6 border border-solid border-gray-300 rounded-xl bg-gray-50">
                 <h2 class="text-xl font-semibold text-green-700 mb-6">Diagnosis Status</h2>
                 <div class="md:flex md:space-x-8">
                     <div class="mb-6 md:mb-0 md:w-1/3">
                         <p class="text-gray-600 mb-3 font-medium">Uploaded Image:</p>
-                        <img id="image-preview" class="w-full h-auto object-cover rounded-lg shadow-md border border-gray-200" alt="Plant Leaf Preview">
+                        <img id="image-preview" class="w-full h-auto object-cover rounded-lg shadow-md border border-solid border-gray-200" alt="Plant Leaf Preview">
                     </div>
                     <div class="md:w-2/3 flex flex-col justify-between space-y-4">
-                        <div id="status-message" class="text-gray-700 text-base p-4 rounded-lg bg-yellow-50 border-l-4 border-yellow-400">Please upload an image to start the analysis.</div>
+                        <div id="status-message" class="text-gray-700 text-base p-4 rounded-lg bg-yellow-50 border-l-4 border-solid border-yellow-400">Please upload an image to start the analysis.</div>
                         <button id="diagnose-button" onclick="startDiagnosis()" class="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold hover:from-green-700 hover:to-green-800 transition-all focus:outline-none focus:ring-4 focus:ring-green-300 disabled:opacity-50" disabled>Start AI Diagnosis (Needs Internet)</button>
                         <button id="reset-button" onclick="resetApp()" class="w-full bg-gray-200 text-gray-800 py-3 rounded-lg font-bold hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-400">Reset</button>
                     </div>
                 </div>
             </div>
 
+            <!-- Results Section -->
             <div id="result-section" class="hidden mt-12">
-                <h2 class="text-3xl font-bold text-red-600 mb-8 border-b pb-3"><span id="diagnosis-emoji">Warning</span> Diagnosis Result</h2>
+                <h2 class="text-3xl font-bold text-red-600 mb-8 border-b border-solid border-gray-300 pb-3">
+                    <span id="diagnosis-emoji">Warning</span> Diagnosis Result
+                </h2>
                 <div class="grid md:grid-cols-2 gap-8">
-                    <div class="bg-red-50 p-8 rounded-xl border border-red-200">
+                    <div class="bg-red-50 p-8 rounded-xl border border-solid border-red-200">
                         <h3 class="text-xl font-semibold text-red-700 mb-4">Identified Issue:</h3>
                         <p id="result-diagnosis" class="text-2xl font-extrabold text-red-800"></p>
                         <p id="result-plant-type" class="text-gray-600 mt-2"></p>
                     </div>
-                    <div class="bg-green-50 p-8 rounded-xl border border-green-200">
+                    <div class="bg-green-50 p-8 rounded-xl border border-solid border-green-200">
                         <h3 class="text-xl font-semibold text-green-700 mb-4">AI Confidence:</h3>
                         <p id="result-confidence" class="text-2xl font-extrabold text-green-800"></p>
                     </div>
                 </div>
-                <div class="mt-8 bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-xl border border-gray-200 shadow-inner">
+                <div class="mt-8 bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-xl border border-solid border-gray-300 shadow-inner">
                     <h3 class="text-2xl font-bold text-green-800 mb-5 flex items-center">
                         <svg class="w-7 h-7 mr-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.204A9.954 9.954 0 0012 3c-4.419 0-8.24 1.803-10.618 4.796m14.236 0c.2.469.366.97.485 1.504M20 10.5c0 .324.015.645.044.966M12 21c-2.41 0-4.63-.642-6.556-1.754M17.152 14.848l-1.424-1.424m-1.424-1.424l-1.424-1.424"></path>
@@ -289,7 +298,7 @@
 
         document.getElementById('logout-button').onclick = logout;
 
-        /* ---------- CAMERA & AI (unchanged logic) ---------- */
+        /* ---------- CAMERA & AI ---------- */
         const useCamera = document.getElementById('use-camera'), cameraModal = document.getElementById('camera-modal'), video = document.getElementById('video'), captureBtn = document.getElementById('capture-button'), closeCam = document.getElementById('close-camera');
         const uploadInput = document.getElementById('file-upload'), uploadBox = document.getElementById('upload-box'), previewSection = document.getElementById('preview-section'), resultSection = document.getElementById('result-section'), diagnoseButton = document.getElementById('diagnose-button'), imagePreview = document.getElementById('image-preview'), statusMessage = document.getElementById('status-message');
 
@@ -321,12 +330,12 @@
 
         function handleFileChange(e) {
             const file = e.target.files[0]; if (!file) return;
-            if (file.size > 5*1024*1024) { statusMessage.innerHTML = 'File too large (max 5MB)'; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-red-400'; return; }
+            if (file.size > 5*1024*1024) { statusMessage.innerHTML = 'File too large (max 5MB)'; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400'; return; }
             fileToBase64(file).then(b => {
                 uploadedFileBase64 = b; imagePreview.src = URL.createObjectURL(file);
                 document.getElementById('upload-section').classList.add('hidden'); previewSection.classList.remove('hidden');
                 statusMessage.innerHTML = translations[currentLang].readyMsg;
-                statusMessage.className = 'p-4 bg-blue-50 border-l-4 border-blue-400';
+                statusMessage.className = 'p-4 bg-green-50 border-l-4 border-solid border-green-400';
                 diagnoseButton.disabled = false;
             });
         }
@@ -334,21 +343,27 @@
         function resetApp() {
             uploadedFileBase64 = null; uploadInput.value = ''; diagnoseButton.disabled = true;
             document.getElementById('upload-section').classList.remove('hidden'); previewSection.classList.add('hidden'); resultSection.classList.add('hidden');
-            statusMessage.innerHTML = 'Upload an image to begin.'; statusMessage.className = 'p-4 bg-yellow-50 border-l-4 border-yellow-400';
+            statusMessage.innerHTML = 'Upload an image to begin.'; statusMessage.className = 'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400';
         }
 
         function setLoading(l) {
             diagnoseButton.disabled = l;
             diagnoseButton.innerHTML = l ? `<div class="loader"></div> Analyzing...` : translations[currentLang].diagnoseBtn;
             statusMessage.innerHTML = l ? translations[currentLang].analyzingMsg : translations[currentLang].readyMsg;
-            statusMessage.className = l ? 'p-4 bg-yellow-50 border-l-4 border-yellow-400' : 'p-4 bg-blue-50 border-l-4 border-blue-400';
+            statusMessage.className = l ? 'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400' : 'p-4 bg-green-50 border-l-4 border-solid border-green-400';
         }
 
         async function startDiagnosis() {
             if (!uploadedFileBase64) return; setLoading(true);
-            if (!navigator.onLine) { setLoading(false); statusMessage.innerHTML = translations[currentLang].noInternet; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-red-400'; return; }
+            if (!navigator.onLine) { setLoading(false); statusMessage.innerHTML = translations[currentLang].noInternet; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400'; return; }
 
-            const payload = { /* ... same payload as before ... */ };
+            const systemPrompt = `You are a world-class plant pathologist...`; // (same as before)
+            const payload = {
+                contents: [{ role: "user", parts: [{ text: "Analyze this plant leaf image..." }, { inlineData: { mimeType: uploadInput.files[0].type || "image/jpeg", data: uploadedFileBase64 } }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { responseMimeType: "application/json", responseSchema: { type: "OBJECT", properties: { plantType: { type: "STRING" }, diseaseName: { type: "STRING" }, confidenceScore: { type: "NUMBER" }, treatmentPlan: { type: "STRING" } }, required: ["plantType", "diseaseName", "confidenceScore", "treatmentPlan"] } }
+            };
+
             try {
                 const r = await fetch(API_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
                 if (!r.ok) throw new Error(`HTTP ${r.status}`);
@@ -356,7 +371,7 @@
                 if (!txt) throw new Error("No AI response");
                 const data = JSON.parse(txt); setLoading(false); displayResults(data);
             } catch (err) {
-                setLoading(false); statusMessage.innerHTML = `Error: ${err.message}`; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-red-400';
+                setLoading(false); statusMessage.innerHTML = `Error: ${err.message}`; statusMessage.className = 'p-4 bg-red-50 border-l-4 border-solid border-red-400';
             }
         }
 
@@ -370,7 +385,7 @@
             document.getElementById('result-treatment').textContent = d.treatmentPlan;
             resultSection.classList.remove('hidden');
             const card = document.querySelector('#result-section .grid > div:first-child');
-            card.className = healthy ? 'bg-green-50 p-8 rounded-xl border border-green-200' : 'bg-red-50 p-8 rounded-xl border border-red-200';
+            card.className = healthy ? 'bg-green-50 p-8 rounded-xl border border-solid border-green-200' : 'bg-red-50 p-8 rounded-xl border border-solid border-red-200';
         }
 
         uploadBox.addEventListener('dragover', e => { e.preventDefault(); uploadBox.classList.add('focus-ring'); });
