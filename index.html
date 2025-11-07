@@ -6,18 +6,59 @@
     <title>Leaf Logic</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {font-family:system-ui,-apple-system,sans-serif;background:#f8fafc;color:#1e293b;}
-        .card {background:white;box-shadow:0 10px 25px rgba(0,0,0,.08);border-radius:1.25rem;transition:transform .3s,box-shadow .3s;}
-        .card:hover {transform:translateY(-2px);box-shadow:0 15px 35px rgba(0,0,0,.12);}
-        #upload-box {border:3px solid #86efac;background:rgba(134,239,172,.15);transition:all .3s ease;cursor:pointer;border-radius:1rem;}
-        #upload-box:hover {background:rgba(74,222,128,.25);border-color:#22c55e;transform:scale(1.02);}
-        .focus-ring {box-shadow:0 0 0 4px rgba(34,197,94,.3);}
-        .loader {border:4px solid #e2e8f0;border-top:4px solid #10b981;border-radius:50%;width:24px;height:24px;animation:spin 1s linear infinite;display:inline-block;margin-right:.5rem;}
-        @keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-        #camera-modal {background:rgba(0,0,0,.75);z-index:50;}
-        #video {width:100%;max-width:640px;border-radius:1rem;}
-        .header-title {font-weight:800;font-size:1.8rem;letter-spacing:-.5px;background:linear-gradient(90deg,#16a34a,#15803d);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-        @media (max-width:640px){.header-title{font-size:1.5rem}}
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f0fdf4; /* Soft light green – perfect contrast */
+            color: #1e293b;
+        }
+        .card {
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,.08);
+            border-radius: 1.25rem;
+            transition: transform .3s, box-shadow .3s;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,.12);
+        }
+        #upload-box {
+            border: 3px solid #86efac;
+            background: rgba(134,239,172,.15);
+            transition: all .3s ease;
+            cursor: pointer;
+            border-radius: 1rem;
+        }
+        #upload-box:hover {
+            background: rgba(74,222,128,.25);
+            border-color: #22c55e;
+            transform: scale(1.02);
+        }
+        .focus-ring {
+            box-shadow: 0 0 0 4px rgba(34,197,94,.3);
+        }
+        .loader {
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #10b981;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: .5rem;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #camera-modal { background: rgba(0,0,0,.75); z-index: 50; }
+        #video { width: 100%; max-width: 640px; border-radius: 1rem; }
+        .header-title {
+            font-weight: 800;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(90deg, #16a34a, #15803d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        @media (max-width: 640px) { .header-title { font-size: 1.5rem; } }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -25,7 +66,7 @@
 <!-- Header -->
 <header class="bg-white shadow-sm border-b border-gray-100 fixed top-0 left-0 right-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-center">
-        <h1 class="header-title">Plant Doctor AI</h1>
+        <h1 class="header-title">Leaf Logic</h1>
     </div>
 </header>
 
@@ -34,8 +75,10 @@
     <!-- Auth -->
     <div id="auth-section" class="bg-white rounded-xl card p-6 md:p-10 mt-6">
         <div id="login-form-container">
-            <header class="text-center mb-10"><h2 class="text-3xl font-bold text-gray-800 mb-3">Welcome Back</h2>
-                <p class="text-gray-600">Login to access the plant health .</p></header>
+            <header class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">Welcome Back</h2>
+                <p class="text-gray-600">Login to access Leaf Logic.</p>
+            </header>
             <form id="login-form" class="space-y-6">
                 <div><label for="login-username" class="block text-gray-700 font-medium mb-2">Username</label>
                     <input type="text" id="login-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" required></div>
@@ -48,8 +91,10 @@
         </div>
 
         <div id="signup-form-container" class="hidden">
-            <header class="text-center mb-10"><h2 class="text-3xl font-bold text-gray-800 mb-3">Create Account</h2>
-                <p class="text-gray-600">Join Plant Doctor AI today.</p></header>
+            <header class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">Create Account</h2>
+                <p class="text-gray-600">Join Leaf Logic today.</p>
+            </header>
             <form id="signup-form" class="space-y-6">
                 <div><label for="signup-username" class="block text-gray-700 font-medium mb-2">Username</label>
                     <input type="text" id="signup-username" class="w-full px-4 py-3 border border-solid border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 bg-gray-50" required></div>
@@ -141,7 +186,7 @@ const translations = {
     kn:{subtitle:"ಎಲೆಯ ಚಿತ್ರವನ್ನು ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ತಕ್ಷಣ ರೋಗನಿರ್ಣಯ ಪಡೆಯಿರಿ.",uploadBox:"ಚಿತ್ರವನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ ಅಥವಾ ಡ್ರ್ಯಾಗ್ ಮಾಡಿ",uploadHint:"JPEG, PNG, 4 MB ವರೆಗೆ",cameraBtn:"ಕ್ಯಾಮೆರಾದಿಂದ ಫೋಟೋ",diagnoseBtn:"AI ರೋಗನಿರ್ಣಯ ಪ್ರಾರಂಭಿಸಿ",resetBtn:"ಮರುಹೊಂದಿಸಿ",readyMsg:"ಚಿತ್ರ ಸಿದ್ಧ – ಡಯಾಗ್ನೋಸ್ ಮಾಡಿ.",analyzingMsg:"AI ವಿಶ್ಲೇಷಿಸುತ್ತಿದೆ…",noInternet:"ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ – ಸಂಪರ್ಕಿಸಿ."}
 };
 let currentLang = localStorage.getItem('lang') || 'en';
-const LOGGED_USER_KEY = 'plantDoctorLoggedUser';
+const LOGGED_USER_KEY = 'leafLogicLoggedUser';
 
 /* ---------- AUTH ---------- */
 function getUsers(){return JSON.parse(localStorage.getItem('users')||'[]');}
@@ -172,7 +217,7 @@ function handleFileChange(e){const file=e.target.files[0];if(!file)return;if(fil
 function resetApp(){uploadedFileBase64=null;uploadInput.value='';diagnoseButton.disabled=true;document.getElementById('upload-section').classList.remove('hidden');previewSection.classList.add('hidden');resultSection.classList.add('hidden');statusMessage.innerHTML='Upload an image to begin.';statusMessage.className='p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400';}
 function setLoading(l){diagnoseButton.disabled=l;diagnoseButton.innerHTML=l?`<div class="loader"></div> ${translations[currentLang].analyzingMsg}`:translations[currentLang].diagnoseBtn;statusMessage.innerHTML=l?translations[currentLang].analyzingMsg:translations[currentLang].readyMsg;statusMessage.className=l?'p-4 bg-yellow-50 border-l-4 border-solid border-yellow-400':'p-4 bg-green-50 border-l-4 border-solid border-green-400';}
 
-/* ---------- GEMINI 2.5 FLASH CALL (FIXED) ---------- */
+/* ---------- GEMINI CALL ---------- */
 async function startDiagnosis(){
     if(!uploadedFileBase64)return;
     if(uploadedFileBase64.length<100){statusMessage.innerHTML='Invalid image.';statusMessage.className='p-4 bg-red-50 border-l-4 border-solid border-red-400';return;}
