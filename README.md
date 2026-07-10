@@ -2,7 +2,7 @@
 Repository  for AXIOM hackathon @ SJBIT
 
 Project Overview<br>
-<h1>Title: Floral Love <h1><br>
+<p><h1>Title: Floral Love <h1><p><br>
 This project is a mobile application designed to help smallholder farmers rapidly diagnose crop diseases in the field using augmented reality (AR) overlays and real-time pattern recognition. The app operates with minimal labeled training data, leveraging transfer learning and lightweight models for on-device inference. Farmers can simply scan crops using their phone camera, receive immediate diagnosis, and get practical treatment tips—localized for usability in English and Kannada.
 
 Features
