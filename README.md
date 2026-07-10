@@ -81,13 +81,6 @@ project-root/
 License
 This project is developed for SJBIT Bangalore Hackathon 2025. Open-source for educational and non-commercial purposes.
 
-Contributors
-Your Team Name + Team Members
-References
-PlantVillage/Kaggle
-
-TensorFlow Lite documentation
-
 ARCore/Unity documentation
 
 
